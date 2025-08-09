@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#FAF7FF; --card:#FFFFFF; --shadow:0 6px 18px rgba(0,0,0,.08); --t:#222; --muted:#667085; --ring:#9BA6FF; --good:#55C595; --warn:#FFB84D; --bad:#FF7A88;}
+  :root{ --bg:#FAF7FF; --card:#FFFFFF; --shadow:0 6px 18px rgba(0,0,0,.08); --t:#222; --muted:#667085; --ring:#9BA6FF; --good:#55C595; --warn:#FFB84D; --bad:#FF7A88; --highlight1:#FFD89C; --highlight2:#FF9EC7; }
   *{box-sizing:border-box} html,body{height:100%}
   body{ margin:0; font-family:"Baloo 2","Noto Sans TC", ui-sans-serif, system-ui, -apple-system, "PingFang TC","Microsoft JhengHei", Arial;
     background: radial-gradient(900px 600px at 110% -10%, #FFE9F3 0%, rgba(255,233,243,0) 60%), radial-gradient(900px 600px at -10% -10%, #E9EDFF 0%, rgba(233,237,255,0) 60%), var(--bg); color:var(--t);}
@@ -16,13 +16,15 @@
   header{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap}
   .title{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow);}
   .title h1{font-size:22px; margin:0; font-weight:700}
-  .toolbar{display:flex; gap:8px; flex-wrap:wrap; z-index:2; position:relative}
+  .toolbar{display:flex; gap:8px; flex-wrap:wrap; z-index:2; position:relative; align-items:center}
   button{border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
   button:active{transform:translateY(1px)}
   .primary{background:linear-gradient(180deg,#7A86FF, #6C79FF); color:#fff}
   .ghost{background:#fff}
   .leveltab{background:#fff}
   .leveltab.active{background:#EEF0FF; border:1px solid #C9CDFF}
+  .callout{background:linear-gradient(180deg,var(--highlight2), var(--highlight1)); color:#5c1b2a; border:1px solid #ffc6df; box-shadow:0 10px 26px rgba(255,80,140,.25);}
+  .callout span{font-weight:800}
   .comic{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px; margin:12px 0}
   .scene{font-size:13px; color:#6b7280; margin-bottom:8px}
   .frames{display:grid; grid-template-columns:1fr 1fr; gap:10px}
@@ -71,7 +73,8 @@
     <div class="toolbar">
       <button class="leveltab active" data-level="1">關卡1</button>
       <button class="leveltab" data-level="2">關卡2</button>
-      <button class="badge" id="btnReadFirst">👀 開始遊戲前請看看我</button>
+      <!-- vivid callout back to the original place -->
+      <button class="callout" id="btnReadFirst">👀 <span>開始遊戲前請看看我</span></button>
       <div class="music" id="musicBox" style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:8px 10px;box-shadow:var(--shadow)">
         🎵
         <button class="ghost" id="btnMusic">播放</button>
@@ -149,10 +152,10 @@
     <h3 style="margin:0 0 8px">請先輸入識別資訊</h3>
     <div style="display:grid; gap:10px">
       <label>教師姓名（必填）
-        <input id="inTid" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：11B">
+        <input id="inTid" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：勇師" required>
       </label>
-      <label>單位 / 部門（選填）
-        <input id="inUnit" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：11B">
+      <label>單位 / 部門（必填）
+        <input id="inUnit" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：11B" required>
       </label>
     </div>
     <div style="text-align:right; margin-top:10px"><button class="primary" id="saveWho">開始</button></div>
@@ -170,7 +173,7 @@ const usp = new URLSearchParams(location.search);
 let TID = usp.get('tid') || '';
 let UNIT = usp.get('unit') || '';
 
-// labels & bank (同前版)
+// labels & bank
 const LABELS = { teacher:'教師中心', learner:'學員中心', over:'過度包容' };
 const BANKS = {
   1: [
@@ -262,7 +265,7 @@ function resize(){ canvas.width = innerWidth; canvas.height = innerHeight } wind
 let pieces = [];
 function celebrate(){ pieces = Array.from({length:140}, ()=> ({ x: Math.random()*canvas.width, y: -20-Math.random()*40, r: 6+Math.random()*8, vy: 2+Math.random()*3, vx: (Math.random()-.5)*2.2, a: Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF'][Math.floor(Math.random()*4)] })); let t=0; (function tick(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{ p.y+=p.vy; p.x+=p.vx; p.a+=5; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); }); if((t++)<180) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height); })(); }
 
-// always show who-modal at start; prefill from URL if present
+// always show who-modal at start; both required; prefill from URL if present
 window.addEventListener('DOMContentLoaded', ()=>{
   const m = document.getElementById('whoModal');
   document.getElementById('inTid').value = TID;
@@ -271,7 +274,8 @@ window.addEventListener('DOMContentLoaded', ()=>{
   document.getElementById('saveWho').onclick = ()=>{
     TID = (document.getElementById('inTid').value || '').trim();
     UNIT = (document.getElementById('inUnit').value || '').trim();
-    if(!TID){ alert('請輸入教師姓名'); return; }
+    if(!TID){ alert('請輸入教師姓名（例如：勇師）'); return; }
+    if(!UNIT){ alert('請輸入單位或部門（例如：11B）'); return; }
     m.style.display='none';
     renderLevel(1);
   };
