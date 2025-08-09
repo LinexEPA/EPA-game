@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EPA 關卡版｜學員中心思維分類 v3</title>
-<!-- Google Fonts with fallback -->
+<title>為什麼要有 EPA？｜快思慢想 ✦</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -73,16 +72,13 @@
   .footer{ margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center }
   .pill{background:#fff; border-radius:999px; padding:6px 10px; box-shadow:var(--shadow); font-size:12px}
 
-  /* Tabs for mobile (buckets) */
   .tabs{display:none; gap:8px; margin:8px 0 0}
   .tab{flex:1; text-align:center; padding:8px 10px; background:#fff; border-radius:999px; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); font-weight:700}
   .tab.active{background:#EEF0FF; border-color:#C9CDFF}
 
-  /* Level tabs */
   .levelbar{display:flex; gap:8px; margin:6px 0 10px; flex-wrap:wrap}
   .leveltab{padding:8px 12px; border-radius:999px; border:1px solid rgba(0,0,0,.06); box-shadow:var(--shadow); font-weight:700}
 
-  /* Responsive: on small screens show tabs and single bucket at a time */
   @media(max-width:860px){
     .grid{display:block}
     .pool{margin-bottom:10px}
@@ -91,7 +87,6 @@
     .bucket.active{display:block}
   }
 
-  /* Result panel */
   .result{display:none; margin-top:16px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
   .result h3{margin:0 0 8px}
   .badlist{display:grid; grid-template-columns: 1fr; gap:8px}
@@ -99,22 +94,35 @@
   .baditem{background:linear-gradient(180deg,#fff,#FFF9FB); border:1px solid #FFE1E6; border-radius:16px; padding:10px}
   .baditem .rewrite{margin-top:6px; background:#F0FFF7; border:1px dashed #BEE8D2; padding:8px; border-radius:10px; font-size:14px}
 
-  /* Confetti */
   .confetti{position:fixed; inset:0; pointer-events:none}
+
+  /* Summary page */
+  .summary{display:none; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
+  .summary h3{margin:0 0 8px}
+  table{width:100%; border-collapse:separate; border-spacing:0 6px}
+  th, td{padding:8px 10px; font-size:14px; vertical-align:top}
+  th{color:#555; text-align:left}
+  tr{background:#fff; box-shadow:var(--shadow)}
+  tr td:first-child{border-radius:12px 0 0 12px}
+  tr td:last-child{border-radius:0 12px 12px 0}
+  .tag{font-size:12px; padding:2px 8px; border-radius:999px; display:inline-block}
+  .t-teacher{background:var(--pink)}
+  .t-learner{background:var(--green)}
+  .t-over{background:var(--yellow)}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="title">
-      <span style="font-size:22px">🎀</span>
-      <h1>EPA 關卡版｜學員中心思維分類</h1>
-      <span class="badge">可愛馬卡龍 · 三階段 · 觸控拖曳</span>
+      <span style="font-size:22px">✨</span>
+      <h1>為什麼要有 EPA？｜快思慢想 ✦</h1>
+      <span class="badge">可愛馬卡龍 · 兩階段遊戲 + 綜整 · 觸控拖曳</span>
     </div>
     <div class="toolbar">
       <button class="leveltab active" data-level="1">關卡1｜生活暖身</button>
       <button class="leveltab" data-level="2">關卡2｜臨床教育</button>
-      <button class="leveltab" data-level="3">關卡3｜進階思辨</button>
+      <button class="leveltab" data-level="S">看看怎麼回事</button>
     </div>
     <div class="toolbar">
       <button class="ghost" id="btnShuffle">洗牌</button>
@@ -124,46 +132,54 @@
     </div>
   </header>
 
-  <p class="hint" id="levelIntro">關卡1：先用生活小劇場理解「教師中心／學員中心／過度包容」。</p>
+  <p class="hint" id="levelIntro">關卡1：用生活小劇場（女友訓練男友😆）理解「教師中心／學員中心／過度包容」。</p>
 
-  <div class="grid">
-    <section class="pool" id="pool">
-      <h3 style="margin:0 0 8px; display:flex; align-items:center; gap:8px">🃏 待分類卡片</h3>
-      <div class="cards" id="poolCards"></div>
-    </section>
+  <div id="gameArea">
+    <div class="grid">
+      <section class="pool" id="pool">
+        <h3 style="margin:0 0 8px; display:flex; align-items:center; gap:8px">🃏 待分類卡片</h3>
+        <div class="cards" id="poolCards"></div>
+      </section>
 
-    <div class="tabs">
-      <div class="tab active" data-target="teacher">👩‍🏫 教師中心</div>
-      <div class="tab" data-target="learner">🌱 學員中心</div>
-      <div class="tab" data-target="over">💗 過度包容</div>
+      <div class="tabs">
+        <div class="tab active" data-target="teacher">👩‍🏫 教師中心</div>
+        <div class="tab" data-target="learner">🌱 學員中心</div>
+        <div class="tab" data-target="over">💗 過度包容</div>
+      </div>
+
+      <section class="bucket active" data-category="teacher">
+        <h3><span>👩‍🏫</span> 教師中心</h3>
+        <div class="cards"></div>
+      </section>
+
+      <section class="bucket" data-category="learner">
+        <h3><span>🌱</span> 學員中心（責任分級）</h3>
+        <div class="cards"></div>
+      </section>
+
+      <section class="bucket" data-category="over">
+        <h3><span>💗</span> 過度包容（不健康）</h3>
+        <div class="cards"></div>
+      </section>
     </div>
 
-    <section class="bucket active" data-category="teacher">
-      <h3><span>👩‍🏫</span> 教師中心</h3>
-      <div class="cards"></div>
-    </section>
+    <div class="footer">
+      <span class="pill">手機：長按拖曳；或點卡片選分類</span>
+      <span class="pill">結果顯示：「對幾題／錯幾題」</span>
+      <span class="pill" id="progress">0 / 0 已分類</span>
+    </div>
 
-    <section class="bucket" data-category="learner">
-      <h3><span>🌱</span> 學員中心（責任分級）</h3>
-      <div class="cards"></div>
-    </section>
-
-    <section class="bucket" data-category="over">
-      <h3><span>💗</span> 過度包容（不健康）</h3>
-      <div class="cards"></div>
+    <section class="result" id="result">
+      <h3>解析</h3>
+      <p style="margin:0 0 10px">本關結果：<b id="rightCount">0</b> 題對、<b id="wrongCount">0</b> 題錯（門檻：<span id="gateText"></span>）。</p>
+      <div class="badlist" id="badlist"></div>
     </section>
   </div>
 
-  <div class="footer">
-    <span class="pill">手機：長按拖曳；或點卡片選分類</span>
-    <span class="pill">結果顯示：「對幾題／錯幾題」</span>
-    <span class="pill" id="progress">0 / 0 已分類</span>
-  </div>
-
-  <section class="result" id="result">
-    <h3>解析</h3>
-    <p style="margin:0 0 10px">本關結果：<b id="rightCount">0</b> 題對、<b id="wrongCount">0</b> 題錯（門檻：<span id="gateText"></span>）。</p>
-    <div class="badlist" id="badlist"></div>
+  <section class="summary" id="summaryArea">
+    <h3>看看怎麼回事｜關卡 1 + 2 總表</h3>
+    <p class="hint">以下彙整所有題目、分類與「學員中心轉譯／理由」，方便快速對照與自學。</p>
+    <div id="summaryTables"></div>
   </section>
 </div>
 
@@ -182,25 +198,29 @@
 <canvas class="confetti" id="confetti"></canvas>
 
 <script>
-  // ---- 題庫（每關各自  teacher/learner/over 各固定數量） ----
+document.addEventListener('DOMContentLoaded', function(){
+  // ---- 題庫 ----
   const BANKS = {
-    1: { // 關1：6題（三類各2）- 生活版（女友訓練男友，小品搞笑）
-      gate: {needRight:7}, // 你要求「要對7題」，但本關共6題，我依你意圖推測是「對5題」？先用5；如需7，請調整題數。
+    1: { // 關1：9題（各3）- 生活版（女友訓練男友）
+      gate: {needRight:7},
       hints: 2,
-      intro: "關卡1：先用生活小劇場理解三類思維。",
+      intro: "關卡1：生活小劇場（女友訓練男友😆），先搞懂三類思維。",
       items: [
-        // teacher x2
-        {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"先讓你洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
-        {text:"報告我幫你寫好，下次再教你怎麼寫。", type:"teacher", rewrite:"先讓你寫一版精要版，我一起補強關鍵。", reason:"老師包辦任務，剝奪練習機會。"},
-        // learner x2
-        {text:"今天你負責倒垃圾，我在旁邊提醒路線與時間點。", type:"learner", rewrite:"——", reason:"設定邊界與監督，屬責任分級的委託。"},
+        // teacher x3
+        {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"你先洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
+        {text:"報告我幫你寫好，下次再教你怎麼寫。", type:"teacher", rewrite:"先讓你寫一版精要版，我一起補強關鍵。", reason:"包辦任務，剝奪練習機會。"},
+        {text:"我已經很忙了，等我有空再教你做飯。", type:"teacher", rewrite:"安排10分鐘迷你練習，今天先學打蛋與開火安全。", reason:"以教師時間為中心，缺乏規律化練習。"},
+        // learner x3
+        {text:"今天你負責倒垃圾，我提醒路線與時間點。", type:"learner", rewrite:"——", reason:"設定邊界與監督，屬責任分級的委託。"},
         {text:"你先煎一顆蛋，我看一次，等下給2點建議。", type:"learner", rewrite:"——", reason:"可觀察＋具體回饋，逐步放權。"},
-        // over x2
+        {text:"你先講今晚的約會流程，我再補充關鍵。", type:"learner", rewrite:"——", reason:"先讓學員輸出，教師把關缺口。"},
+        // over x3
         {text:"你今天很累不要做家事了，我全包。", type:"over", rewrite:"把任務切小：你收碗，我刷鍋；維持最小責任。", reason:"過度保護，模糊責任界線。"},
-        {text:"怕你受挫，就不說剛剛哪裡做不好。", type:"over", rewrite:"針對行為給建議，不貼標籤，並說下一步做法。", reason:"以保護為名迴避回饋，影響成長。"}
+        {text:"怕你受挫，就不說剛剛哪裡做不好。", type:"over", rewrite:"針對行為給建議，不貼標籤，並說下一步作法。", reason:"以保護為名迴避回饋，影響成長。"},
+        {text:"你只要負責可愛就好，其他都我來。", type:"over", rewrite:"切出低風險任務讓你完成，建立可靠度。", reason:"取消責任，無法鍛鍊能力。"},
       ]
     },
-    2: { // 關2：12題（三類各4）- 臨床教育版
+    2: { // 關2：12題（各4）- 臨床教育版
       gate: {needRight:10},
       hints: 2,
       intro: "關卡2：把概念落回臨床教育情境。",
@@ -219,35 +239,36 @@
         {text:"別跟他說錯在哪，怕打擊信心。", type:"over", rewrite:"聚焦行為與結果，給下一步具體作法。", reason:"迴避回饋，影響學習。"},
         {text:"他都新人，先不要讓他做任何事。", type:"over", rewrite:"切出低風險片段，在監督下練習。", reason:"剝奪練習機會，無成長責任。"},
         {text:"學員準備不足也沒關係，下次再說。", type:"over", rewrite:"界定最小安全任務與下次前的準備清單。", reason:"標準模糊，放任延宕。"},
-        {text:"為了和諧，錯誤就先不提了。", type:"over", rewrite:"先私下具體回饋，再約下一次檢核。", reason:"以和諧之名忽視安全與學習。"}
-      ]
-    },
-    3: { // 關3：12題（三類各4）- 進階思辨版
-      gate: {needRight:10},
-      hints: 1,
-      intro: "關卡3：灰色地帶判斷，強調『為什麼不是相鄰類別』。",
-      items: [
-        // teacher x4
-        {text:"我想他應該能處理急救，直接讓他上。", type:"teacher", rewrite:"先在低風險段落觀摩，確認能力與支持再上場。", reason:"無風險控管、無對應等級依據。"},
-        {text:"我知道他會，但這次我還是自己做比較快。", type:"teacher", rewrite:"切片段交給他，維持練習頻率與責任。", reason:"把效率置於學習之前。"},
-        {text:"同學很多，我沒時間針對他給回饋。", type:"teacher", rewrite:"用結構化簡短回饋（2條）維持循環。", reason:"回饋中斷，學習循環斷裂。"},
-        {text:"他很努力，評分就給高一點吧。", type:"teacher", rewrite:"依行為指標評分，另給鼓勵文字。", reason:"把態度當結果評分依據。"},
-        // learner x4
-        {text:"常規病人已可獨立，面對高複雜個案先觀摩再接手。", type:"learner", rewrite:"——", reason:"依情境複雜度調整監督強度。"},
-        {text:"已達 3a 在可預期情境，遇變項我再接回。", type:"learner", rewrite:"——", reason:"半監督放權，明確邊界。"},
-        {text:"他能完成，但穩定度不足，先限定在日班再放權。", type:"learner", rewrite:"——", reason:"以可靠度與環境風險作邊界。"},
-        {text:"先讓他做 50%，我做剩下 50%，下次再增加比例。", type:"learner", rewrite:"——", reason:"逐步委託，強化掌握感。"},
-        // over x4
-        {text:"最近他壓力大，這週都先不要給回饋。", type:"over", rewrite:"改為短而溫和的具體回饋，維持節奏。", reason:"完全取消回饋，學習停滯。"},
-        {text:"他怕犯錯，就讓他只看不做直到有自信。", type:"over", rewrite:"設計低風險實作段落，建立自信。", reason:"長期旁觀，缺乏實作與成長。"},
-        {text:"遇到難的都先幫他擋掉，免得他受挫。", type:"over", rewrite:"在我監督下處理難點的小切片。", reason:"過度保護，錯失學習契機。"},
-        {text:"他有時會忘記事情，我幫他全做完比較安心。", type:"over", rewrite:"建立檢核表和提醒機制，保留他應負的責任。", reason:"取消責任，無法培養可靠度。"}
+        {text:"為了和諧，錯誤就先不提了。", type:"over", rewrite:"先私下具體回饋，再約下一次檢核。", reason:"以和諧之名忽視安全與學習。"},
       ]
     }
   };
 
-  // 修正：你在需求中寫「關1門檻對7題」，但關1只有6題。先以「對5題」為門檻，若要7題請把題數改成 ≥7。
-  BANKS[1].gate.needRight = 5;
+  // ---- 生成 Summary ----
+  function buildSummary(){
+    const $summary = document.getElementById('summaryTables');
+    $summary.innerHTML='';
+    Object.entries(BANKS).forEach(([lv, data])=>{
+      const box=document.createElement('div'); box.style.margin='10px 0 20px';
+      box.innerHTML=`<h4 style="margin:6px 0;">關卡${lv} 總表</h4>`;
+      const table=document.createElement('table');
+      const thead=document.createElement('thead');
+      thead.innerHTML='<tr><th style="width:26%">語句</th><th style="width:10%">分類</th><th style="width:30%">學員中心轉譯</th><th>理由</th></tr>';
+      table.appendChild(thead);
+      const tbody=document.createElement('tbody');
+      data.items.forEach(it=>{
+        const tr=document.createElement('tr');
+        const tag = it.type==='teacher' ? '<span class="tag t-teacher">教師中心</span>' :
+                    it.type==='learner' ? '<span class="tag t-learner">學員中心</span>' :
+                    '<span class="tag t-over">過度包容</span>';
+        tr.innerHTML=`<td>${it.text}</td><td>${tag}</td><td>${it.rewrite==='——'?'—':it.rewrite}</td><td>${it.reason}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      box.appendChild(table);
+      $summary.appendChild(box);
+    });
+  }
 
   // ---- 狀態 ----
   const $pool = document.getElementById('poolCards');
@@ -260,10 +281,11 @@
   const $rightCount = document.getElementById('rightCount');
   const $wrongCount = document.getElementById('wrongCount');
   const $gateText = document.getElementById('gateText');
-  const $score = document.getElementById('score');
   const $toast = document.getElementById('toast');
   const $modal = document.getElementById('modal');
   const $intro = document.getElementById('levelIntro');
+  const $gameArea = document.getElementById('gameArea');
+  const $summaryArea = document.getElementById('summaryArea');
   let activeCard = null;
   let hintLeft = 2; const $hintLeft = document.getElementById('hintLeft');
   let currentLevel = 1;
@@ -275,8 +297,17 @@
     tab.addEventListener('click', ()=>{
       $levelTabs.forEach(t=>t.classList.remove('active'));
       tab.classList.add('active');
-      currentLevel = Number(tab.dataset.level);
-      loadLevel(currentLevel);
+      const lv = tab.dataset.level;
+      if(lv==='S'){ // summary
+        $gameArea.style.display='none';
+        $summaryArea.style.display='block';
+        buildSummary();
+      }else{
+        $gameArea.style.display='block';
+        $summaryArea.style.display='none';
+        currentLevel = Number(lv);
+        loadLevel(currentLevel);
+      }
     });
   });
 
@@ -298,12 +329,9 @@
     el.textContent=item.text;
     el.dataset.key=idx;
     el.draggable=true;
-    // Mouse drag
     el.addEventListener('dragstart', e=>{el.classList.add('dragging'); e.dataTransfer.setData('text/plain', idx);});
     el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
-    // Tap-to-place
     el.addEventListener('click', ()=>{ if(pointerDragging) return; activeCard=el; $modal.style.display='flex'});
-    // Pointer touch-drag
     el.addEventListener('pointerdown', (e)=>{
       if(e.pointerType!=='touch') return;
       e.preventDefault();
@@ -376,8 +404,8 @@
     });
     $rightCount.textContent = correct;
     $wrongCount.textContent = total - correct;
-    $gateText.textContent = `至少答對 ${BANKS[currentLevel].gate.needRight} 題`;
-    // render wrong list
+    const need = BANKS[currentLevel].gate.needRight;
+    $gateText.textContent = `至少答對 ${need} 題`;
     $badlist.innerHTML='';
     wrong.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
@@ -388,7 +416,7 @@
       $badlist.appendChild(div);
     })
     $result.style.display='block';
-    if(correct>=BANKS[currentLevel].gate.needRight) celebrate();
+    if(correct>=need) celebrate();
   }
 
   function useHint(){
@@ -431,24 +459,19 @@
   }
   function drawConfetti(p){ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore()}
 
-  // Load level
   function loadLevel(lv){
-    // Intro & hints
     $intro.textContent = BANKS[lv].intro;
     hintLeft = BANKS[lv].hints; $hintLeft.textContent = hintLeft;
-    // Clear buckets
     $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
-    // Render pool
     renderPool(BANKS[lv].items);
-    // Result hide
     $result.style.display='none';
-    // Mobile default bucket
     $tabs.forEach((t,i)=> t.classList.toggle('active', i===0));
     $buckets.forEach((b,i)=> b.classList.toggle('active', i===0));
   }
 
   // init
   loadLevel(1);
+}); // DOMContentLoaded
 </script>
 </body>
 </html>
