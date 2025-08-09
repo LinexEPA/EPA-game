@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>為什麼要有 EPA？｜快思慢想 ✦</title>
+<title>為什麼要有 EPA？｜快思慢想 ✦（超相容版）</title>
 <style>
   :root{
     --bg:#FAF7FF;
@@ -11,7 +11,6 @@
     --shadow:0 6px 18px rgba(0,0,0,.08);
     --t:#2b2b2b;
     --muted:#667085;
-    --brand:#6C79FF;
     --green:#B7F0D1;
     --pink:#FFD6DE;
     --yellow:#FFE9A9;
@@ -34,7 +33,7 @@
   .title{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow); }
   .title h1{font-size:20px; margin:0; font-weight:700}
   .badge{font-size:12px; color:#4B5563; background:linear-gradient(180deg,#fff, #F6F9FF); border:1px solid #E8EBFF; padding:6px 10px; border-radius:999px}
-  .toolbar{display:flex; gap:8px; flex-wrap:wrap}
+  .toolbar{display:flex; gap:8px; flex-wrap:wrap; z-index:2; position:relative}
   button{border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
   button:active{transform:translateY(1px)}
   .primary{background:linear-gradient(180deg,#7A86FF, #6C79FF); color:#fff}
@@ -45,7 +44,8 @@
 
   .hint{margin:10px 0 16px; color:var(--muted); font-size:14px}
 
-  .grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+  .grid{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:860px){.grid{grid-template-columns:1fr 1fr 1fr}}
   .pool, .bucket{min-height:160px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:12px}
   .pool{grid-column: 1 / -1; background:linear-gradient(180deg,#ffffff,#FDFBFF)}
   .bucket[data-category="teacher"]{background:linear-gradient(180deg,#ffffff, var(--pink))}
@@ -55,34 +55,16 @@
   .bucket h3 span{font-size:20px}
   .cards{display:flex; flex-wrap:wrap; gap:8px}
 
-  .card{ user-select:none; -webkit-user-drag:none; touch-action:none;
+  .card{
+    user-select:none; 
     background:var(--card); border-radius:18px; padding:12px 12px; min-width:180px; max-width:260px; flex:1 0 180px;
-    box-shadow:var(--shadow); cursor:grab; border:1px solid rgba(0,0,0,.04);
-    transition:transform .15s ease, box-shadow .15s ease; }
-  .card:active{cursor:grabbing}
-  .card.dragging{opacity:.9; transform:rotate(2deg) scale(1.03)}
-  .card.follow{position:fixed; z-index:9999; pointer-events:none; transform:translate(-50%,-50%) scale(1.03);}
-
-  .drop-highlight{outline:2px dashed rgba(0,0,0,.15); outline-offset:-6px}
-  .bucket.hover{outline:3px solid var(--ring); outline-offset:-6px}
+    box-shadow:var(--shadow); cursor:pointer; border:1px solid rgba(0,0,0,.04);
+    transition:transform .15s ease, box-shadow .15s ease; 
+  }
+  .card:active{transform:scale(0.98)}
 
   .footer{ margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center }
   .pill{background:#fff; border-radius:999px; padding:6px 10px; box-shadow:var(--shadow); font-size:12px}
-
-  .tabs{display:none; gap:8px; margin:8px 0 0}
-  .tab{flex:1; text-align:center; padding:8px 10px; background:#fff; border-radius:999px; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); font-weight:700}
-  .tab.active{background:#EEF0FF; border-color:#C9CDFF}
-
-  .levelbar{display:flex; gap:8px; margin:6px 0 10px; flex-wrap:wrap}
-  .leveltab{padding:8px 12px; border-radius:999px; border:1px solid rgba(0,0,0,.06); box-shadow:var(--shadow); font-weight:700}
-
-  @media(max-width:860px){
-    .grid{display:block}
-    .pool{margin-bottom:10px}
-    .tabs{display:flex}
-    .bucket{display:none}
-    .bucket.active{display:block}
-  }
 
   .result{display:none; margin-top:16px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
   .result h3{margin:0 0 8px}
@@ -90,8 +72,6 @@
   @media(min-width:760px){.badlist{grid-template-columns: 1fr 1fr}}
   .baditem{background:linear-gradient(180deg,#fff,#FFF9FB); border:1px solid #FFE1E6; border-radius:16px; padding:10px}
   .baditem .rewrite{margin-top:6px; background:#F0FFF7; border:1px dashed #BEE8D2; padding:8px; border-radius:10px; font-size:14px}
-
-  .confetti{position:fixed; inset:0; pointer-events:none}
 
   .summary{display:none; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
   .summary h3{margin:0 0 8px}
@@ -106,18 +86,26 @@
   .t-learner{background:var(--green)}
   .t-over{background:var(--yellow)}
 
-  /* JS status badge */
-  .jsok{position:fixed; top:10px; right:10px; background:#10b981; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:var(--shadow); display:none}
+  /* Modal */
+  .modal{position:fixed; inset:0; background:rgba(0,0,0,.15); display:none; align-items:flex-end; z-index:5}
+  .sheet{background:#fff; border-radius:18px 18px 0 0; padding:12px; box-shadow:0 -10px 30px rgba(0,0,0,.15); width:100%}
+  .sheet h4{margin:4px 6px 10px}
+  .choices{display:flex; gap:10px}
+  .choice{flex:1; padding:12px; border-radius:14px; border:1px solid rgba(0,0,0,.08); display:flex; gap:8px; align-items:center; justify-content:center; cursor:pointer}
+  .choice[data-target="teacher"]{background:var(--pink)}
+  .choice[data-target="learner"]{background:var(--green)}
+  .choice[data-target="over"]{background:var(--yellow)}
+
+  .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:none; z-index:6}
 </style>
 </head>
 <body>
-<div class="jsok" id="jsok">JS Loaded</div>
 <div class="wrap">
   <header>
     <div class="title">
       <span style="font-size:22px">✨</span>
       <h1>為什麼要有 EPA？｜快思慢想 ✦</h1>
-      <span class="badge">可愛馬卡龍 · 兩階段遊戲 + 綜整 · 觸控拖曳</span>
+      <span class="badge">超相容：點卡片選分類 · 兩階段 + 總表</span>
     </div>
     <div class="toolbar">
       <button class="leveltab active" data-level="1">關卡1｜生活暖身</button>
@@ -141,13 +129,7 @@
         <div class="cards" id="poolCards"></div>
       </section>
 
-      <div class="tabs">
-        <div class="tab active" data-target="teacher">👩‍🏫 教師中心</div>
-        <div class="tab" data-target="learner">🌱 學員中心</div>
-        <div class="tab" data-target="over">💗 過度包容</div>
-      </div>
-
-      <section class="bucket active" data-category="teacher">
+      <section class="bucket" data-category="teacher">
         <h3><span>👩‍🏫</span> 教師中心</h3>
         <div class="cards"></div>
       </section>
@@ -164,7 +146,7 @@
     </div>
 
     <div class="footer">
-      <span class="pill">手機：長按拖曳；或點卡片選分類</span>
+      <span class="pill">操作：<b>點卡片</b> → 選分類</span>
       <span class="pill">結果顯示：「對幾題／錯幾題」</span>
       <span class="pill" id="progress">0 / 0 已分類</span>
     </div>
@@ -178,11 +160,12 @@
 
   <section class="summary" id="summaryArea">
     <h3>看看怎麼回事｜關卡 1 + 2 總表</h3>
-    <p class="hint">以下彙整所有題目、分類與「學員中心轉譯／理由」，方便快速對照與自學。</p>
+    <p class="hint">彙整所有題目、分類與「學員中心轉譯／理由」，方便快速對照與自學。</p>
     <div id="summaryTables"></div>
   </section>
 </div>
 
+<!-- Modal -->
 <div class="modal" id="modal">
   <div class="sheet">
     <h4>把這句話放到哪一類？</h4>
@@ -195,12 +178,10 @@
   </div>
 </div>
 <div class="toast" id="toast">已放置</div>
-<canvas class="confetti" id="confetti"></canvas>
 
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  document.getElementById('jsok').style.display='block'; // JS status badge
-
+(function(){
+  // ---- 題庫 ----
   const BANKS = {
     1: {gate:{needRight:7}, hints:2, intro:"關卡1：生活小劇場（女友訓練男友😆），先搞懂三類思維。", items:[
       {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"你先洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
@@ -229,137 +210,90 @@ document.addEventListener('DOMContentLoaded', function(){
     ]}
   };
 
-  function buildSummary(){
-    const $summary = document.getElementById('summaryTables');
-    $summary.innerHTML='';
-    Object.entries(BANKS).forEach(([lv, data])=>{
-      const box=document.createElement('div'); box.style.margin='10px 0 20px';
-      box.innerHTML=`<h4 style="margin:6px 0;">關卡${lv} 總表</h4>`;
-      const table=document.createElement('table');
-      const thead=document.createElement('thead');
-      thead.innerHTML='<tr><th style="width:26%">語句</th><th style="width:10%">分類</th><th style="width:30%">學員中心轉譯</th><th>理由</th></tr>';
-      table.appendChild(thead);
-      const tbody=document.createElement('tbody');
-      data.items.forEach(it=>{
-        const tr=document.createElement('tr');
-        const tag = it.type==='teacher' ? '<span class="tag t-teacher">教師中心</span>' :
-                    it.type==='learner' ? '<span class="tag t-learner">學員中心</span>' :
-                    '<span class="tag t-over">過度包容</span>';
-        tr.innerHTML=`<td>${it.text}</td><td>${tag}</td><td>${it.rewrite==='——'?'—':it.rewrite}</td><td>${it.reason}</td>`;
-        tbody.appendChild(tr);
-      });
-      table.appendChild(tbody);
-      box.appendChild(table);
-      $summary.appendChild(box);
-    });
-  }
-
+  // ---- DOM ----
   const $pool = document.getElementById('poolCards');
   const $buckets = [...document.querySelectorAll('.bucket')];
-  const $tabs = [...document.querySelectorAll('.tab')];
-  const $levelTabs = [...document.querySelectorAll('.leveltab')];
   const $progress = document.getElementById('progress');
   const $result = document.getElementById('result');
   const $badlist = document.getElementById('badlist');
   const $rightCount = document.getElementById('rightCount');
   const $wrongCount = document.getElementById('wrongCount');
   const $gateText = document.getElementById('gateText');
-  const $toast = document.getElementById('toast');
-  const $modal = document.getElementById('modal');
   const $intro = document.getElementById('levelIntro');
-  const $gameArea = document.getElementById('gameArea');
   const $summaryArea = document.getElementById('summaryArea');
+  const $gameArea = document.getElementById('gameArea');
+  const $hintLeft = document.getElementById('hintLeft');
+
   let activeCard = null;
-  let hintLeft = 2; const $hintLeft = document.getElementById('hintLeft');
   let currentLevel = 1;
-  let pointerDragging=false; let dragOffsetX=0, dragOffsetY=0; let originParent=null; let currentHoverBucket=null;
+  let hintLeft = 2;
 
-  $levelTabs.forEach(tab=>{
-    tab.addEventListener('click', ()=>{
-      $levelTabs.forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      const lv = tab.dataset.level;
-      if(lv==='S'){ $gameArea.style.display='none'; $summaryArea.style.display='block'; buildSummary(); }
-      else { $gameArea.style.display='block'; $summaryArea.style.display='none'; currentLevel = Number(lv); loadLevel(currentLevel); }
-    });
-  });
-
-  $tabs.forEach(tab => {
-    tab.addEventListener('click', ()=>{
-      $tabs.forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.target;
-      $buckets.forEach(b=> b.classList.toggle('active', b.dataset.category===target));
-    });
-  });
-
+  // ---- Helper ----
   function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]} return arr }
-
-  function makeCard(item, idx){
-    const el=document.createElement('div');
-    el.className='card';
-    el.textContent=item.text;
-    el.dataset.key=idx;
-    el.draggable=true;
-    el.addEventListener('dragstart', e=>{el.classList.add('dragging'); e.dataTransfer.setData('text/plain', idx);});
-    el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
-    el.addEventListener('click', ()=>{ if(pointerDragging) return; activeCard=el; $modal.style.display='flex'});
-    el.addEventListener('pointerdown', (e)=>{
-      if(e.pointerType!=='touch') return;
-      e.preventDefault();
-      activeCard=el; pointerDragging=true; originParent=el.parentElement;
-      const rect=el.getBoundingClientRect();
-      dragOffsetX=e.clientX - rect.left - rect.width/2;
-      dragOffsetY=e.clientY - rect.top - rect.height/2;
-      el.classList.add('follow');
-      el.style.width=rect.width+'px';
-      moveFollow(el, e.clientX - dragOffsetX, e.clientY - dragOffsetY);
-      window.addEventListener('pointermove', onPointerMove, {passive:false});
-      window.addEventListener('pointerup', onPointerUp, {once:true});
-    });
-    return el
-  }
+  function showToast(msg){const $t=document.getElementById('toast'); $t.textContent=msg; $t.style.display='block'; setTimeout(()=>{$t.style.display='none'},900)}
 
   function renderPool(items){
     $pool.innerHTML='';
-    shuffle(items).forEach((item,i)=> $pool.appendChild(makeCard(item, i)) );
+    shuffle(items).forEach((item,i)=>{
+      const el=document.createElement('div');
+      el.className='card';
+      el.textContent=item.text;
+      el.dataset.key=i;
+      $pool.appendChild(el);
+    });
     updateProgress(items.length);
   }
-
   function updateProgress(total){
     const placed= total - $pool.querySelectorAll('.card').length;
-    $progress.textContent=`${placed} / ${total} 已分類`;
+    document.getElementById('progress').textContent = `${placed} / ${total} 已分類`;
   }
 
-  $buckets.forEach(b=>{
-    const box=b.querySelector('.cards');
-    b.addEventListener('dragover', e=>{e.preventDefault(); box.classList.add('drop-highlight')});
-    b.addEventListener('dragleave', ()=> box.classList.remove('drop-highlight'));
-    b.addEventListener('drop', e=>{
-      e.preventDefault();
-      const key=e.dataTransfer.getData('text/plain');
-      const card=[...document.querySelectorAll('.card')].find(c=>c.dataset.key===key);
-      if(card){ box.appendChild(card); showToast('已放置'); }
-      box.classList.remove('drop-highlight');
-      updateProgress(BANKS[currentLevel].items.length);
-    });
-  })
+  function loadLevel(lv){
+    currentLevel = lv;
+    const data = BANKS[lv];
+    $intro.textContent = data.intro;
+    hintLeft = data.hints;
+    $hintLeft.textContent = hintLeft;
+    $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
+    renderPool(data.items);
+    $result.style.display='none';
+  }
 
-  $modal.addEventListener('click', (e)=>{
-    if(e.target.classList.contains('choice')){
-      const target=e.target.dataset.target;
-      const bucket=document.querySelector(`.bucket[data-category="${target}"] .cards`);
-      if(activeCard && bucket){ bucket.appendChild(activeCard); showToast('已放置'); }
-      $modal.style.display='none'; activeCard=null; updateProgress(BANKS[currentLevel].items.length);
-    } else if(e.target.classList.contains('modal')){
-      $modal.style.display='none'; activeCard=null;
+  // ---- Global click delegation ----
+  document.addEventListener('click', function(e){
+    const t = e.target;
+    // Level tabs
+    if(t.classList.contains('leveltab')){
+      document.querySelectorAll('.leveltab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const lv = t.dataset.level;
+      if(lv==='S'){ $gameArea.style.display='none'; $summaryArea.style.display='block'; buildSummary(); }
+      else { $summaryArea.style.display='none'; $gameArea.style.display='block'; loadLevel(Number(lv)); }
+      return;
     }
-  });
+    // Buttons
+    if(t.id==='btnShuffle'){ renderPool(BANKS[currentLevel].items); return; }
+    if(t.id==='btnReset'){ loadLevel(currentLevel); return; }
+    if(t.id==='btnCheck'){ checkAnswers(); return; }
+    if(t.id==='btnHint'){ useHint(); return; }
 
-  document.getElementById('btnReset').addEventListener('click', ()=>loadLevel(currentLevel));
-  document.getElementById('btnShuffle').addEventListener('click', ()=>{renderPool(BANKS[currentLevel].items)});
-  document.getElementById('btnCheck').addEventListener('click', checkAnswers);
-  document.getElementById('btnHint').addEventListener('click', useHint);
+    // Cards -> open modal
+    if(t.classList.contains('card')){
+      activeCard = t;
+      document.getElementById('modal').style.display='flex';
+      return;
+    }
+    // Modal choices
+    if(t.classList.contains('choice')){
+      const target=t.dataset.target;
+      const box = document.querySelector(`.bucket[data-category="${target}"] .cards`);
+      if(activeCard && box){ box.appendChild(activeCard); showToast('已放置'); updateProgress(BANKS[currentLevel].items.length); }
+      document.getElementById('modal').style.display='none'; activeCard=null;
+      return;
+    }
+    // Close modal when clicking shade
+    if(t.id==='modal'){ t.style.display='none'; activeCard=null; return; }
+  });
 
   function checkAnswers(){
     const items = BANKS[currentLevel].items;
@@ -368,14 +302,12 @@ document.addEventListener('DOMContentLoaded', function(){
       const key=Number(card.dataset.key); const answer=items[key].type;
       const parentBucket = card.closest('.bucket');
       const user = parentBucket ? parentBucket.dataset.category : 'pool';
-      if(user===answer){ correct++; } 
-      else { if(user!=='pool') wrong.push({text:items[key].text, rewrite:items[key].rewrite, should:answer, reason:items[key].reason}) }
+      if(user===answer){ correct++; } else { if(user!=='pool') wrong.push({text:items[key].text, rewrite:items[key].rewrite, should:answer, reason:items[key].reason}) }
     });
-    document.getElementById('rightCount').textContent = correct;
-    document.getElementById('wrongCount').textContent = total - correct;
-    const need = BANKS[currentLevel].gate.needRight;
-    document.getElementById('gateText').textContent = `至少答對 ${need} 題`;
-    const $badlist = document.getElementById('badlist'); $badlist.innerHTML='';
+    $rightCount.textContent = correct;
+    $wrongCount.textContent = total - correct;
+    $gateText.textContent = `至少答對 ${BANKS[currentLevel].gate.needRight} 題`;
+    $badlist.innerHTML='';
     wrong.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
       const shouldLabel = w.should==='teacher'?'教師中心': w.should==='learner'?'學員中心（責任分級）':'過度包容';
@@ -384,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function(){
       div.appendChild(rw);
       $badlist.appendChild(div);
     })
-    document.getElementById('result').style.display='block';
+    $result.style.display='block';
   }
 
   function useHint(){
@@ -395,41 +327,36 @@ document.addEventListener('DOMContentLoaded', function(){
     const wrongs = categories.filter(c=>c!==answer); const keep = wrongs[Math.floor(Math.random()*wrongs.length)];
     const options = [answer, keep].map(c=> c==='teacher'?'👩‍🏫 教師中心': c==='learner'?'🌱 學員中心（責任分級）':'💗 過度包容');
     showToast('可能是：'+options.join(' 或 '));
-    const tip = items[key].reason;
-    setTimeout(()=>{ showToast('線索：'+tip) }, 900);
-    hintLeft--; document.getElementById('hintLeft').textContent=hintLeft;
+    setTimeout(()=>{ showToast('線索：'+items[key].reason) }, 900);
+    hintLeft--; $hintLeft.textContent=hintLeft;
   }
 
-  function showToast(msg){const $toast=document.getElementById('toast'); $toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},900)}
-
-  function getBucketAt(x,y){ const els = document.elementsFromPoint(x,y); return els.find(e=> e.classList && e.classList.contains('bucket')) || null; }
-  function moveFollow(el, x, y){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.transform='translate(-50%, -50%) scale(1.03)'; }
-  function onPointerMove(e){ if(!pointerDragging||!activeCard) return; e.preventDefault();
-    moveFollow(activeCard, e.clientX - (dragOffsetX), e.clientY - (dragOffsetY));
-    const b = getBucketAt(e.clientX, e.clientY); if(b){ b.classList.add('hover'); }
-  }
-  function onPointerUp(e){
-    window.removeEventListener('pointermove', onPointerMove);
-    if(!activeCard) return;
-    const b = getBucketAt(e.clientX, e.clientY);
-    if(b){ b.querySelector('.cards').appendChild(activeCard); showToast('已放置'); }
-    activeCard.classList.remove('follow'); activeCard.style.left=''; activeCard.style.top=''; activeCard.style.width=''; activeCard.style.transform='';
-    activeCard=null; pointerDragging=false; 
-    updateProgress(BANKS[currentLevel].items.length);
-  }
-
-  function loadLevel(lv){
-    document.getElementById('levelIntro').textContent = BANKS[lv].intro;
-    hintLeft = BANKS[lv].hints; document.getElementById('hintLeft').textContent = hintLeft;
-    $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
-    renderPool(BANKS[lv].items);
-    document.getElementById('result').style.display='none';
-    $tabs.forEach((t,i)=> t.classList.toggle('active', i===0));
-    $buckets.forEach((b,i)=> b.classList.toggle('active', i===0));
+  // Summary builder
+  function buildSummary(){
+    const box = document.getElementById('summaryTables');
+    box.innerHTML='';
+    Object.entries(BANKS).forEach(([lv, data])=>{
+      const wrap=document.createElement('div'); wrap.style.margin='10px 0 20px';
+      wrap.innerHTML=`<h4 style="margin:6px 0;">關卡${lv} 總表</h4>`;
+      const table=document.createElement('table');
+      table.innerHTML='<thead><tr><th style="width:26%">語句</th><th style="width:10%">分類</th><th style="width:30%">學員中心轉譯</th><th>理由</th></tr></thead>';
+      const tbody=document.createElement('tbody');
+      data.items.forEach(it=>{
+        const tr=document.createElement('tr');
+        const tag = it.type==='teacher' ? '<span class="tag t-teacher">教師中心</span>' :
+                    it.type==='learner' ? '<span class="tag t-learner">學員中心</span>' :
+                    '<span class="tag t-over">過度包容</span>';
+        tr.innerHTML=`<td>${it.text}</td><td>${tag}</td><td>${it.rewrite==='——'?'—':it.rewrite}</td><td>${it.reason}</td>`;
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      box.appendChild(wrap);
+    });
   }
 
+  // init
   loadLevel(1);
-});
-</script>
+})();</script>
 </body>
 </html>
