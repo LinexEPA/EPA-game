@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>為什麼要有 EPA？｜快思慢想 ✦（漫畫版＋後台紀錄）</title>
+<title>為什麼要有 EPA？｜快思慢想 ✦（漫畫版＋紀錄＋特效）</title>
 <style>
   :root{
     --bg:#FAF7FF;
@@ -11,9 +11,6 @@
     --shadow:0 6px 18px rgba(0,0,0,.08);
     --t:#2b2b2b;
     --muted:#667085;
-    --green:#B7F0D1;
-    --pink:#FFD6DE;
-    --yellow:#FFE9A9;
     --ring:#9BA6FF;
   }
   *{box-sizing:border-box}
@@ -27,11 +24,10 @@
       var(--bg);
     color:var(--t);
   }
-  .wrap{max-width:980px; margin:0 auto; padding:16px 16px 28px}
+  .wrap{max-width:980px; margin:0 auto; padding:16px 16px 120px}
   header{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap}
   .title{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow); }
   .title h1{font-size:20px; margin:0; font-weight:700}
-  .badge{font-size:12px; color:#4B5563; background:linear-gradient(180deg,#fff, #F6F9FF); border:1px solid #E8EBFF; padding:6px 10px; border-radius:999px}
   .toolbar{display:flex; gap:8px; flex-wrap:wrap; z-index:2; position:relative}
   button{border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
   button:active{transform:translateY(1px)}
@@ -55,11 +51,19 @@
   .pillbtn[data-ans="learner"]{background:linear-gradient(180deg,#ffffff,#eafff2)}
   .pillbtn[data-ans="over"]{background:linear-gradient(180deg,#ffffff,#fff3cf)}
 
-  .result{display:none; margin-top:16px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
-  .result h3{margin:0 0 8px}
+  /* Result modal centered */
+  .result-modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:8; background:rgba(0,0,0,.2)}
+  .result-card{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px 20px; width:min(92%,520px); text-align:center}
+  .result-card h3{margin:0 0 10px}
+  .result-card .nums{font-size:18px; font-weight:800}
+  .result-card .btns{display:flex; gap:10px; justify-content:center; margin-top:12px}
+
+  /* Footer submit bar */
+  .footerbar{position:fixed; left:0; right:0; bottom:0; z-index:7; display:flex; justify-content:center; padding:10px}
+  .footerbar .bar{background:rgba(255,255,255,.85); backdrop-filter: blur(6px); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:8px; display:flex; gap:8px; box-shadow:var(--shadow)}
 
   /* Help modal */
-  .modal{position:fixed; inset:0; background:rgba(0,0,0,.15); display:none; align-items:center; justify-content:center; z-index:5}
+  .modal{position:fixed; inset:0; background:rgba(0,0,0,.15); display:none; align-items:center; justify-content:center; z-index:9}
   .cardhelp{background:#fff; width:min(92%,680px); border-radius:18px; box-shadow:var(--shadow); padding:16px}
   .helpgrid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
   .helpitem{background:#fff; border-radius:16px; padding:12px; box-shadow:var(--shadow)}
@@ -67,16 +71,19 @@
   .helpitem.learner{background:linear-gradient(180deg,#fff,#eafff2)}
   .lock{opacity:.6; filter:grayscale(.3)}
 
-  .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:none; z-index:6}
+  .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:78px; background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:none; z-index:10}
+
+  /* Confetti canvas */
+  canvas#confetti{position:fixed; inset:0; pointer-events:none; z-index:6}
 </style>
 </head>
 <body>
+<canvas id="confetti"></canvas>
 <div class="wrap">
   <header>
     <div class="title">
       <span style="font-size:22px">📚</span>
       <h1>為什麼要有 EPA？｜快思慢想 ✦</h1>
-      
     </div>
     <div class="toolbar">
       <button class="leveltab active" data-level="1">關卡1</button>
@@ -84,19 +91,34 @@
       <button class="leveltab" data-level="H">說明專區</button>
     </div>
     <div class="toolbar">
-      <button class="ghost" id="btnReset">重置本關</button>
-      <button class="primary" id="btnSubmit">送出本關</button>
+      <button class="ghost" id="btnResetTop">重置本關</button>
+      <button class="primary" id="btnSubmitTop">送出本關</button>
     </div>
   </header>
 
   <p class="hint" id="intro">關卡1：臨床迷你劇本，請把下列情境分類。</p>
 
   <div id="quiz"></div>
+</div>
 
-  <section class="result" id="result">
+<!-- Footer submit bar -->
+<div class="footerbar">
+  <div class="bar">
+    <button class="ghost" id="btnResetBottom">重置本關</button>
+    <button class="primary" id="btnSubmitBottom">送出本關</button>
+  </div>
+</div>
+
+<!-- Centered result modal -->
+<div class="result-modal" id="resultModal">
+  <div class="result-card">
     <h3>結果</h3>
-    <p>本關答對 <b id="ok">0</b> 題、答錯 <b id="bad">0</b> 題。</p>
-  </section>
+    <div class="nums">本關答對 <b id="ok">0</b> 題、答錯 <b id="bad">0</b> 題。</div>
+    <div class="btns">
+      <button class="ghost" id="closeResult">關閉</button>
+      <button class="primary" id="retry">再玩一次</button>
+    </div>
+  </div>
 </div>
 
 <!-- Help modal -->
@@ -175,9 +197,10 @@ async function logAnswer(payload){ try{ await fetch(GAS_URL, {method:'POST', mod
 function renderLevel(lv){
   currentLevel = lv; answered.clear(); submitted=false;
   document.getElementById('intro').textContent = `關卡${lv}：臨床迷你劇本，請把下列情境分類。`;
-  document.getElementById('result').style.display='none';
+  document.getElementById('resultModal').style.display='none';
   quiz.innerHTML='';
   BANKS[lv].forEach(item=>{ quiz.appendChild(comicItem(item)); });
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function comicItem(item){
@@ -208,17 +231,16 @@ function choose(item, ans, el){
     chosen:ans, correct:(ans===item.type), used_hint:0, time_ms:0,
     device_width:innerWidth, user_agent:navigator.userAgent
   });
+  clickTone();
 }
 
-document.getElementById('btnReset').addEventListener('click', ()=>renderLevel(currentLevel));
-
-document.getElementById('btnSubmit').addEventListener('click', ()=>{
+function submitLevel(){
   const items = BANKS[currentLevel];
   let correct=0;
   items.forEach(it=>{ if(answered.get(it.id)===it.type) correct++; });
   document.getElementById('ok').textContent=correct;
   document.getElementById('bad').textContent=items.length - correct;
-  document.getElementById('result').style.display='block';
+  document.getElementById('resultModal').style.display='flex';
   submitted = true;
   // summary log
   logAnswer({
@@ -227,7 +249,9 @@ document.getElementById('btnSubmit').addEventListener('click', ()=>{
     device_width:innerWidth, user_agent:navigator.userAgent
   });
   toast('已送出');
-});
+  celebrate();
+  successTone();
+}
 
 // tabs
 document.querySelectorAll('.leveltab').forEach(tab=>{
@@ -248,6 +272,60 @@ document.querySelectorAll('.leveltab').forEach(tab=>{
 });
 
 document.getElementById('closeHelp').addEventListener('click', ()=>document.getElementById('helpModal').style.display='none');
+document.getElementById('closeResult').addEventListener('click', ()=>document.getElementById('resultModal').style.display='none');
+document.getElementById('retry').addEventListener('click', ()=>{ document.getElementById('resultModal').style.display='none'; renderLevel(currentLevel); });
+
+document.getElementById('btnResetTop').addEventListener('click', ()=>renderLevel(currentLevel));
+document.getElementById('btnResetBottom').addEventListener('click', ()=>renderLevel(currentLevel));
+document.getElementById('btnSubmitTop').addEventListener('click', submitLevel);
+document.getElementById('btnSubmitBottom').addEventListener('click', submitLevel);
+
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+window.addEventListener('resize', resize); resize();
+let pieces = [];
+function celebrate(){
+  pieces = Array.from({length:140}, ()=> ({
+    x: Math.random()*canvas.width,
+    y: -20 - Math.random()*50,
+    r: 6+Math.random()*8,
+    vy: 2+Math.random()*3,
+    vx: (Math.random()-.5)*2.5,
+    a: Math.random()*360,
+    col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF'][Math.floor(Math.random()*4)]
+  }));
+  let t=0;
+  (function tick(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{ p.y+=p.vy; p.x+=p.vx; p.a+=5;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180);
+      ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore();
+    });
+    if((t++)<180) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height);
+  })();
+}
+
+// Simple WebAudio tones (無需外部音檔)
+let audioCtx;
+function ensureAudio(){ if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } }
+function tone(freq, dur=0.15, vol=0.06){
+  ensureAudio();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine'; o.frequency.value=freq;
+  g.gain.value = vol;
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start();
+  setTimeout(()=>{ o.stop(); }, dur*1000);
+}
+function clickTone(){ tone(660, 0.06, 0.03); }
+function successTone(){
+  // 小小升階三音
+  setTimeout(()=>tone(523.25,0.12,0.05), 0);
+  setTimeout(()=>tone(659.25,0.12,0.05), 120);
+  setTimeout(()=>tone(783.99,0.2,0.06), 240);
+}
 
 // init
 renderLevel(1);
