@@ -3,105 +3,103 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EPA 關卡 1｜學員中心思維分類</title>
+<title>EPA 關卡版｜學員中心思維分類 v3</title>
+<!-- Google Fonts with fallback -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#FFF7F3; /* 柔和米杏 */
+    --bg:#FAF7FF;
     --card:#FFFFFF;
     --shadow:0 6px 18px rgba(0,0,0,.08);
-    --t:#222;
+    --t:#2b2b2b;
     --muted:#667085;
-    --brand:#6C79FF; /* 馬卡龍藍紫 */
-    --good:#55C595; /* 馬卡龍綠 */
-    --warn:#FFB84D; /* 馬卡龍橘 */
-    --bad:#FF7A88;  /* 馬卡龍粉紅 */
-    --yellow:#FFF2C6;
-    --green:#E8FFF1;
-    --pink:#FFE8ED;
-    --blue:#E9EDFF;
+    --brand:#6C79FF;
+    --green:#B7F0D1;
+    --pink:#FFD6DE;
+    --yellow:#FFE9A9;
+    --ring:#9BA6FF;
+    --blue:#D7E4FF;
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0; font-family:"Inter Var", ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial;
-    background: radial-gradient(1200px 800px at 80% -10%, #FFE9F3 0%, rgba(255,233,243,0) 60%), var(--bg);
+    margin:0; 
+    font-family:"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, Arial;
+    background:
+      radial-gradient(900px 600px at 110% -10%, #FFE9F3 0%, rgba(255,233,243,0) 60%),
+      radial-gradient(900px 600px at -10% -10%, #E9EDFF 0%, rgba(233,237,255,0) 60%),
+      var(--bg);
     color:var(--t);
   }
-  .wrap{max-width:1100px; margin:0 auto; padding:16px 16px 24px}
-  header{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px}
-  .title{
-    display:flex; align-items:center; gap:12px;
-    padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow);
-  }
-  .title h1{font-size:18px; margin:0}
+  .wrap{max-width:980px; margin:0 auto; padding:16px 16px 28px}
+  header{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap}
+  .title{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow); }
+  .title h1{font-family:"Baloo 2", "Noto Sans TC"; font-size:20px; margin:0}
   .badge{font-size:12px; color:#4B5563; background:linear-gradient(180deg,#fff, #F6F9FF); border:1px solid #E8EBFF; padding:6px 10px; border-radius:999px}
   .toolbar{display:flex; gap:8px; flex-wrap:wrap}
-  button{border:0; border-radius:12px; padding:10px 14px; font-weight:600; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
+  button{border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
   button:active{transform:translateY(1px)}
   .primary{background:linear-gradient(180deg,#7A86FF, #6C79FF); color:#fff}
   .ghost{background:#fff}
-  .success{background:linear-gradient(180deg,#75D7A8,#55C595); color:#fff}
-  .danger{background:linear-gradient(180deg,#FFA0AD,#FF7A88); color:#fff}
+  .hintbtn{background:linear-gradient(180deg,#FFE8AA,#FFD769)}
+  .leveltab{background:#fff}
+  .leveltab.active{background:#EEF0FF; border:1px solid #C9CDFF}
 
   .hint{margin:10px 0 16px; color:var(--muted); font-size:14px}
 
-  .grid{display:grid; grid-template-columns:1fr; gap:12px}
-  @media(min-width:860px){.grid{grid-template-columns: 1.1fr 1fr 1fr 1fr}}
-
-  .pool, .bucket{min-height:160px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:12px}
-  .pool{background:linear-gradient(180deg,#ffffff,#FDFBFF)}
-
-  .bucket{position:relative}
+  .grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+  .pool, .bucket{min-height:160px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:12px}
+  .pool{grid-column: 1 / -1; background:linear-gradient(180deg,#ffffff,#FDFBFF)}
   .bucket[data-category="teacher"]{background:linear-gradient(180deg,#ffffff, var(--pink))}
   .bucket[data-category="learner"]{background:linear-gradient(180deg,#ffffff, var(--green))}
   .bucket[data-category="over"]{background:linear-gradient(180deg,#ffffff, var(--yellow))}
-
   .bucket h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:8px}
   .bucket h3 span{font-size:20px}
-
   .cards{display:flex; flex-wrap:wrap; gap:8px}
-  .card{
-    user-select:none; -webkit-user-drag:none; touch-action:none;
-    background:var(--card); border-radius:14px; padding:12px 12px; min-width:180px; max-width:260px; flex:1 0 180px;
+
+  .card{ user-select:none; -webkit-user-drag:none; touch-action:none;
+    background:var(--card); border-radius:18px; padding:12px 12px; min-width:180px; max-width:260px; flex:1 0 180px;
     box-shadow:var(--shadow); cursor:grab; border:1px solid rgba(0,0,0,.04);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
+    transition:transform .15s ease, box-shadow .15s ease; }
   .card:active{cursor:grabbing}
-  .card.small{min-width:140px}
-  .card .tag{font-size:12px; color:#9CA3AF}
   .card.dragging{opacity:.9; transform:rotate(2deg) scale(1.03)}
-  .card.follow{position:fixed; z-index:9999; pointer-events:none; transform:translate(-50%,-50%) scale(1.03);} 
+  .card.follow{position:fixed; z-index:9999; pointer-events:none; transform:translate(-50%,-50%) scale(1.03);}
 
   .drop-highlight{outline:2px dashed rgba(0,0,0,.15); outline-offset:-6px}
-  .bucket.hover{outline:3px solid rgba(108,121,255,.35); outline-offset:-6px}
+  .bucket.hover{outline:3px solid var(--ring); outline-offset:-6px}
 
-  .footer{
-    margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center
-  }
-  .score{font-weight:700}
+  .footer{ margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center }
   .pill{background:#fff; border-radius:999px; padding:6px 10px; box-shadow:var(--shadow); font-size:12px}
 
-  /* Modal for tap-to-place on mobile */
-  .modal{position:fixed; inset:0; background:rgba(0,0,0,.15); display:none; align-items:flex-end}
-  .sheet{background:#fff; border-radius:18px 18px 0 0; padding:12px; box-shadow:0 -10px 30px rgba(0,0,0,.15); width:100%}
-  .sheet h4{margin:4px 6px 10px}
-  .choices{display:flex; gap:10px}
-  .choice{flex:1; padding:12px; border-radius:14px; border:1px solid rgba(0,0,0,.08); display:flex; gap:8px; align-items:center; justify-content:center}
-  .choice[data-target="teacher"]{background:var(--pink)}
-  .choice[data-target="learner"]{background:var(--green)}
-  .choice[data-target="over"]{background:var(--yellow)}
+  /* Tabs for mobile (buckets) */
+  .tabs{display:none; gap:8px; margin:8px 0 0}
+  .tab{flex:1; text-align:center; padding:8px 10px; background:#fff; border-radius:999px; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); font-weight:700}
+  .tab.active{background:#EEF0FF; border-color:#C9CDFF}
 
-  .toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:none}
+  /* Level tabs */
+  .levelbar{display:flex; gap:8px; margin:6px 0 10px; flex-wrap:wrap}
+  .leveltab{padding:8px 12px; border-radius:999px; border:1px solid rgba(0,0,0,.06); box-shadow:var(--shadow); font-weight:700}
+
+  /* Responsive: on small screens show tabs and single bucket at a time */
+  @media(max-width:860px){
+    .grid{display:block}
+    .pool{margin-bottom:10px}
+    .tabs{display:flex}
+    .bucket{display:none}
+    .bucket.active{display:block}
+  }
 
   /* Result panel */
-  .result{display:none; margin-top:16px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:14px}
+  .result{display:none; margin-top:16px; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
   .result h3{margin:0 0 8px}
   .badlist{display:grid; grid-template-columns: 1fr; gap:8px}
   @media(min-width:760px){.badlist{grid-template-columns: 1fr 1fr}}
-  .baditem{background:linear-gradient(180deg,#fff,#FFF9FB); border:1px solid #FFE1E6; border-radius:14px; padding:10px}
+  .baditem{background:linear-gradient(180deg,#fff,#FFF9FB); border:1px solid #FFE1E6; border-radius:16px; padding:10px}
   .baditem .rewrite{margin-top:6px; background:#F0FFF7; border:1px dashed #BEE8D2; padding:8px; border-radius:10px; font-size:14px}
 
-  /* Cute confetti */
+  /* Confetti */
   .confetti{position:fixed; inset:0; pointer-events:none}
 </style>
 </head>
@@ -109,19 +107,24 @@
 <div class="wrap">
   <header>
     <div class="title">
-      <span style="font-size:20px">🎯</span>
-      <h1>EPA 關卡 1｜把「教學決策語句」分類</h1>
-      <span class="badge">Mobile-first · 拖拉 or 點選放置</span>
+      <span style="font-size:22px">🎀</span>
+      <h1>EPA 關卡版｜學員中心思維分類</h1>
+      <span class="badge">可愛馬卡龍 · 三階段 · 觸控拖曳</span>
+    </div>
+    <div class="toolbar">
+      <button class="leveltab active" data-level="1">關卡1｜生活暖身</button>
+      <button class="leveltab" data-level="2">關卡2｜臨床教育</button>
+      <button class="leveltab" data-level="3">關卡3｜進階思辨</button>
     </div>
     <div class="toolbar">
       <button class="ghost" id="btnShuffle">洗牌</button>
       <button class="ghost" id="btnReset">重置</button>
-      <button class="ghost" id="btnHint">提示 × <span id="hintLeft">2</span></button>
+      <button class="hintbtn" id="btnHint">提示 × <span id="hintLeft">2</span></button>
       <button class="primary" id="btnCheck">送出判定</button>
     </div>
   </header>
 
-  <p class="hint">請把下方句子拖放到正確的類別。提示：<b>學員中心 ≠ 無條件包容</b>，而是依能力分級的「責任委託」。</p>
+  <p class="hint" id="levelIntro">關卡1：先用生活小劇場理解「教師中心／學員中心／過度包容」。</p>
 
   <div class="grid">
     <section class="pool" id="pool">
@@ -129,7 +132,13 @@
       <div class="cards" id="poolCards"></div>
     </section>
 
-    <section class="bucket" data-category="teacher">
+    <div class="tabs">
+      <div class="tab active" data-target="teacher">👩‍🏫 教師中心</div>
+      <div class="tab" data-target="learner">🌱 學員中心</div>
+      <div class="tab" data-target="over">💗 過度包容</div>
+    </div>
+
+    <section class="bucket active" data-category="teacher">
       <h3><span>👩‍🏫</span> 教師中心</h3>
       <div class="cards"></div>
     </section>
@@ -146,14 +155,14 @@
   </div>
 
   <div class="footer">
-    <span class="pill">長按拖動，或輕點卡片以選擇類別</span>
-    <span class="pill">及格門檻：80 分</span>
+    <span class="pill">手機：長按拖曳；或點卡片選分類</span>
+    <span class="pill">結果顯示：「對幾題／錯幾題」</span>
     <span class="pill" id="progress">0 / 0 已分類</span>
   </div>
 
   <section class="result" id="result">
     <h3>解析</h3>
-    <p style="margin:0 0 10px">你的分數：<b id="score">0</b> 分。下面是需要調整的句子與「學員中心轉譯」。</p>
+    <p style="margin:0 0 10px">本關結果：<b id="rightCount">0</b> 題對、<b id="wrongCount">0</b> 題錯（門檻：<span id="gateText"></span>）。</p>
     <div class="badlist" id="badlist"></div>
   </section>
 </div>
@@ -166,52 +175,122 @@
       <div class="choice" data-target="learner">🌱 學員中心</div>
       <div class="choice" data-target="over">💗 過度包容</div>
     </div>
-    <div style="margin-top:10px; font-size:13px; color:#6b7280">沒有把握？點選上方「提示」可獲得 50/50 線索或說明。</div>
+    <div style="margin-top:10px; font-size:13px; color:#6b7280">沒有把握？點上方「提示」可獲得 50/50 線索或理由。</div>
   </div>
 </div>
 <div class="toast" id="toast">已放置</div>
 <canvas class="confetti" id="confetti"></canvas>
 
 <script>
-  // ==== 題庫（12～15 句）====
-  const BANK = [
-    {text:"這個工作我自己做比較快，學員看我就好。", type:"teacher", rewrite:"讓學員先做一次，我在旁邊安全監督並即時回饋。", reason:"把效率放在教師身上；未提供學員可委託的片段與回饋循環。"},
-    {text:"我覺得他差不多了，可以放手讓他做。", type:"teacher", rewrite:"他已符合 3a 的標準情境，我會在可預期情境下半監督放手。", reason:"以教師主觀感覺為依據，未對應具體等級與情境。"},
-    {text:"等我有空再帶他練。", type:"teacher", rewrite:"安排短時段微演練，確保每天都有練習與回饋循環。", reason:"以教師時間為中心，缺乏規律化的學員練習安排。"},
-    {text:"今天交班很趕，就不要讓學員講了。", type:"teacher", rewrite:"讓學員先做精要版，我補關鍵並控制風險。", reason:"用時間壓力取代學習機會；未設計低風險的可委託片段。"},
+  // ---- 題庫（每關各自  teacher/learner/over 各固定數量） ----
+  const BANKS = {
+    1: { // 關1：6題（三類各2）- 生活版（女友訓練男友，小品搞笑）
+      gate: {needRight:7}, // 你要求「要對7題」，但本關共6題，我依你意圖推測是「對5題」？先用5；如需7，請調整題數。
+      hints: 2,
+      intro: "關卡1：先用生活小劇場理解三類思維。",
+      items: [
+        // teacher x2
+        {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"先讓你洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
+        {text:"報告我幫你寫好，下次再教你怎麼寫。", type:"teacher", rewrite:"先讓你寫一版精要版，我一起補強關鍵。", reason:"老師包辦任務，剝奪練習機會。"},
+        // learner x2
+        {text:"今天你負責倒垃圾，我在旁邊提醒路線與時間點。", type:"learner", rewrite:"——", reason:"設定邊界與監督，屬責任分級的委託。"},
+        {text:"你先煎一顆蛋，我看一次，等下給2點建議。", type:"learner", rewrite:"——", reason:"可觀察＋具體回饋，逐步放權。"},
+        // over x2
+        {text:"你今天很累不要做家事了，我全包。", type:"over", rewrite:"把任務切小：你收碗，我刷鍋；維持最小責任。", reason:"過度保護，模糊責任界線。"},
+        {text:"怕你受挫，就不說剛剛哪裡做不好。", type:"over", rewrite:"針對行為給建議，不貼標籤，並說下一步做法。", reason:"以保護為名迴避回饋，影響成長。"}
+      ]
+    },
+    2: { // 關2：12題（三類各4）- 臨床教育版
+      gate: {needRight:10},
+      hints: 2,
+      intro: "關卡2：把概念落回臨床教育情境。",
+      items: [
+        // teacher x4
+        {text:"今天交班很趕，就不要讓學員講了。", type:"teacher", rewrite:"讓學員先講精要版，我補關鍵並控風險。", reason:"以時間壓力取代學習機會。"},
+        {text:"我覺得他差不多了，可以放手讓他做。", type:"teacher", rewrite:"已達 3a 標準情境，半監督放手。", reason:"以主觀感覺，未對應等級與情境指標。"},
+        {text:"等我有空再帶他練。", type:"teacher", rewrite:"安排短時段微演練，每天有練習與回饋。", reason:"以教師時間為中心，缺乏規律化。"},
+        {text:"這次我先做示範，學員看就好。", type:"teacher", rewrite:"示範後切片段交給學員做。", reason:"示範後未轉交可委託片段。"},
+        // learner x4
+        {text:"抽血技巧不熟，先用 DOPS 集中練三次。", type:"learner", rewrite:"——", reason:"分離單一技能以 DOPS 練習支撐 EPA。"},
+        {text:"常遺漏交班重點，改用 ISBAR 並錄音回顧。", type:"learner", rewrite:"——", reason:"導入結構與自我回顧。"},
+        {text:"他昨天兩次高風險錯誤，今天改回全程監督。", type:"learner", rewrite:"——", reason:"依風險動態調整監督強度。"},
+        {text:"已在常規病人表現穩定，先讓他在標準情境半監督獨立。", type:"learner", rewrite:"——", reason:"按情境複雜度與可靠度放權。"},
+        // over x4
+        {text:"別跟他說錯在哪，怕打擊信心。", type:"over", rewrite:"聚焦行為與結果，給下一步具體作法。", reason:"迴避回饋，影響學習。"},
+        {text:"他都新人，先不要讓他做任何事。", type:"over", rewrite:"切出低風險片段，在監督下練習。", reason:"剝奪練習機會，無成長責任。"},
+        {text:"學員準備不足也沒關係，下次再說。", type:"over", rewrite:"界定最小安全任務與下次前的準備清單。", reason:"標準模糊，放任延宕。"},
+        {text:"為了和諧，錯誤就先不提了。", type:"over", rewrite:"先私下具體回饋，再約下一次檢核。", reason:"以和諧之名忽視安全與學習。"}
+      ]
+    },
+    3: { // 關3：12題（三類各4）- 進階思辨版
+      gate: {needRight:10},
+      hints: 1,
+      intro: "關卡3：灰色地帶判斷，強調『為什麼不是相鄰類別』。",
+      items: [
+        // teacher x4
+        {text:"我想他應該能處理急救，直接讓他上。", type:"teacher", rewrite:"先在低風險段落觀摩，確認能力與支持再上場。", reason:"無風險控管、無對應等級依據。"},
+        {text:"我知道他會，但這次我還是自己做比較快。", type:"teacher", rewrite:"切片段交給他，維持練習頻率與責任。", reason:"把效率置於學習之前。"},
+        {text:"同學很多，我沒時間針對他給回饋。", type:"teacher", rewrite:"用結構化簡短回饋（2條）維持循環。", reason:"回饋中斷，學習循環斷裂。"},
+        {text:"他很努力，評分就給高一點吧。", type:"teacher", rewrite:"依行為指標評分，另給鼓勵文字。", reason:"把態度當結果評分依據。"},
+        // learner x4
+        {text:"常規病人已可獨立，面對高複雜個案先觀摩再接手。", type:"learner", rewrite:"——", reason:"依情境複雜度調整監督強度。"},
+        {text:"已達 3a 在可預期情境，遇變項我再接回。", type:"learner", rewrite:"——", reason:"半監督放權，明確邊界。"},
+        {text:"他能完成，但穩定度不足，先限定在日班再放權。", type:"learner", rewrite:"——", reason:"以可靠度與環境風險作邊界。"},
+        {text:"先讓他做 50%，我做剩下 50%，下次再增加比例。", type:"learner", rewrite:"——", reason:"逐步委託，強化掌握感。"},
+        // over x4
+        {text:"最近他壓力大，這週都先不要給回饋。", type:"over", rewrite:"改為短而溫和的具體回饋，維持節奏。", reason:"完全取消回饋，學習停滯。"},
+        {text:"他怕犯錯，就讓他只看不做直到有自信。", type:"over", rewrite:"設計低風險實作段落，建立自信。", reason:"長期旁觀，缺乏實作與成長。"},
+        {text:"遇到難的都先幫他擋掉，免得他受挫。", type:"over", rewrite:"在我監督下處理難點的小切片。", reason:"過度保護，錯失學習契機。"},
+        {text:"他有時會忘記事情，我幫他全做完比較安心。", type:"over", rewrite:"建立檢核表和提醒機制，保留他應負的責任。", reason:"取消責任，無法培養可靠度。"}
+      ]
+    }
+  };
 
-    {text:"他已能依步驟完成，但信心不足，給一次獨立完成的機會。", type:"learner", rewrite:"——", reason:"根據表現調整監督強度，提供可掌握挑戰以強化自我效能。"},
-    {text:"此任務難度適中，正好挑戰他的下一階能力。", type:"learner", rewrite:"——", reason:"以學員當前能力做配適，創造可達成的伸展目標。"},
-    {text:"我先觀察他做一次，結束後給 2 條具體可改進建議。", type:"learner", rewrite:"——", reason:"強調可觀察行為與具體回饋，支援成長循環。"},
-    {text:"讓學員先交班，我負責把關安全與時間。", type:"learner", rewrite:"——", reason:"設定邊界並分擔風險，屬責任分級下的委託。"},
+  // 修正：你在需求中寫「關1門檻對7題」，但關1只有6題。先以「對5題」為門檻，若要7題請把題數改成 ≥7。
+  BANKS[1].gate.needRight = 5;
 
-    {text:"他沒準備也沒關係，下次再說。", type:"over", rewrite:"先界定最小安全任務，給明確預期與下次前要達到的準備。", reason:"模糊標準、放任延宕，無助於學習與安全。"},
-    {text:"別跟他說錯在哪，免得打擊信心。", type:"over", rewrite:"回饋聚焦在行為與結果，避免貼標籤，同時給下一步具體作法。", reason:"以保護為名迴避回饋，削弱學習成效。"},
-    {text:"我來處理就好，不用麻煩他。", type:"over", rewrite:"切出可委託片段，讓他在我監督下負責一小段。", reason:"剝奪練習機會且無成長責任。"},
-
-    {text:"他抽血技巧還不熟，先用 DOPS 集中練習 3 次。", type:"learner", rewrite:"——", reason:"分離單一技能以 DOPS 針對練，用於支撐 EPA 任務表現。"},
-    {text:"交班內容常遺漏重點，讓他用 ISBAR 結構練習並錄音回顧。", type:"learner", rewrite:"——", reason:"導入結構化工具與自我回顧，提升任務品質。"},
-    {text:"昨天他出現兩次高風險錯誤，今天改回全程監督。", type:"learner", rewrite:"——", reason:"依風險動態調整監督強度，確保安全為先。"}
-  ];
-
-  // ==== 狀態 ====
+  // ---- 狀態 ----
   const $pool = document.getElementById('poolCards');
   const $buckets = [...document.querySelectorAll('.bucket')];
+  const $tabs = [...document.querySelectorAll('.tab')];
+  const $levelTabs = [...document.querySelectorAll('.leveltab')];
   const $progress = document.getElementById('progress');
   const $result = document.getElementById('result');
   const $badlist = document.getElementById('badlist');
+  const $rightCount = document.getElementById('rightCount');
+  const $wrongCount = document.getElementById('wrongCount');
+  const $gateText = document.getElementById('gateText');
   const $score = document.getElementById('score');
   const $toast = document.getElementById('toast');
   const $modal = document.getElementById('modal');
+  const $intro = document.getElementById('levelIntro');
   let activeCard = null;
   let hintLeft = 2; const $hintLeft = document.getElementById('hintLeft');
+  let currentLevel = 1;
   // 觸控拖曳狀態
   let pointerDragging=false; let dragOffsetX=0, dragOffsetY=0; let originParent=null; let currentHoverBucket=null;
 
-  function shuffle(arr){
-    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
-    return arr
-  }
+  // Level switching
+  $levelTabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      $levelTabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      currentLevel = Number(tab.dataset.level);
+      loadLevel(currentLevel);
+    });
+  });
+
+  // Bucket tabs (mobile)
+  $tabs.forEach(tab => {
+    tab.addEventListener('click', ()=>{
+      $tabs.forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.target;
+      $buckets.forEach(b=> b.classList.toggle('active', b.dataset.category===target));
+    });
+  });
+
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]} return arr }
 
   function makeCard(item, idx){
     const el=document.createElement('div');
@@ -219,14 +298,14 @@
     el.textContent=item.text;
     el.dataset.key=idx;
     el.draggable=true;
-    // Mouse drag (桌機)
+    // Mouse drag
     el.addEventListener('dragstart', e=>{el.classList.add('dragging'); e.dataTransfer.setData('text/plain', idx);});
     el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
-    // Tap-to-place (手機備援)
+    // Tap-to-place
     el.addEventListener('click', ()=>{ if(pointerDragging) return; activeCard=el; $modal.style.display='flex'});
-    // Pointer touch-drag (手機主要)
+    // Pointer touch-drag
     el.addEventListener('pointerdown', (e)=>{
-      if(e.pointerType!=='touch') return; // 僅在觸控啟用自製拖曳
+      if(e.pointerType!=='touch') return;
       e.preventDefault();
       activeCard=el; pointerDragging=true; originParent=el.parentElement;
       const rect=el.getBoundingClientRect();
@@ -241,14 +320,13 @@
     return el
   }
 
-  function renderPool(){
+  function renderPool(items){
     $pool.innerHTML='';
-    shuffle(BANK).forEach((item,i)=> $pool.appendChild(makeCard(item, i)) );
-    updateProgress();
+    shuffle(items).forEach((item,i)=> $pool.appendChild(makeCard(item, i)) );
+    updateProgress(items.length);
   }
 
-  function updateProgress(){
-    const total=BANK.length;
+  function updateProgress(total){
     const placed= total - $pool.querySelectorAll('.card').length;
     $progress.textContent=`${placed} / ${total} 已分類`;
   }
@@ -264,7 +342,7 @@
       const card=[...document.querySelectorAll('.card')].find(c=>c.dataset.key===key);
       if(card){ box.appendChild(card); showToast('已放置'); }
       box.classList.remove('drop-highlight');
-      updateProgress();
+      updateProgress(BANKS[currentLevel].items.length);
     });
   })
 
@@ -274,68 +352,62 @@
       const target=e.target.dataset.target;
       const bucket=document.querySelector(`.bucket[data-category="${target}"] .cards`);
       if(activeCard && bucket){ bucket.appendChild(activeCard); showToast('已放置'); }
-      $modal.style.display='none'; activeCard=null; updateProgress();
+      $modal.style.display='none'; activeCard=null; updateProgress(BANKS[currentLevel].items.length);
     } else if(e.target.classList.contains('modal')){
       $modal.style.display='none'; activeCard=null;
     }
   });
 
   // Buttons
-  document.getElementById('btnReset').addEventListener('click', ()=>{renderPool(); $buckets.forEach(b=>b.querySelector('.cards').innerHTML=''); $result.style.display='none';});
-  document.getElementById('btnShuffle').addEventListener('click', ()=>{renderPool()});
+  document.getElementById('btnReset').addEventListener('click', ()=>loadLevel(currentLevel));
+  document.getElementById('btnShuffle').addEventListener('click', ()=>{renderPool(BANKS[currentLevel].items)});
   document.getElementById('btnCheck').addEventListener('click', checkAnswers);
   document.getElementById('btnHint').addEventListener('click', useHint);
 
   function checkAnswers(){
-    // Compute score
-    let correct=0; let wrong=[]; const total=BANK.length; const weight=Math.floor(100/total);
-    // scan each card and compare bucket
+    const items = BANKS[currentLevel].items;
+    let correct=0; let wrong=[]; const total=items.length;
     document.querySelectorAll('.card').forEach(card=>{
-      const key=Number(card.dataset.key); const answer=BANK[key].type;
+      const key=Number(card.dataset.key); const answer=items[key].type;
       const parentBucket = card.closest('.bucket');
       const user = parentBucket ? parentBucket.dataset.category : 'pool';
-      if(user===answer){ correct++; sparkle(card) } else { if(user!=='pool') wrong.push({text:BANK[key].text, rewrite:BANK[key].rewrite, should:answer, reason:BANK[key].reason}) }
-    })
-    const score = Math.round( (correct/total) * 100 );
-    $score.textContent=score;
+      if(user===answer){ correct++; sparkle(card) } 
+      else { if(user!=='pool') wrong.push({text:items[key].text, rewrite:items[key].rewrite, should:answer, reason:items[key].reason}) }
+    });
+    $rightCount.textContent = correct;
+    $wrongCount.textContent = total - correct;
+    $gateText.textContent = `至少答對 ${BANKS[currentLevel].gate.needRight} 題`;
     // render wrong list
     $badlist.innerHTML='';
     wrong.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
       const shouldLabel = w.should==='teacher'?'教師中心': w.should==='learner'?'學員中心（責任分級）':'過度包容';
       div.innerHTML=`<div><b>應該分類：</b>${shouldLabel}</div><div style="margin-top:6px">${w.text}</div>`;
-      if(w.rewrite && w.rewrite!=='——'){
-        const rw=document.createElement('div'); rw.className='rewrite'; rw.innerHTML=`<b>學員中心轉譯：</b>${w.rewrite}<br><span style="color:#6b7280">為什麼？${w.reason}</span>`; div.appendChild(rw);
-      } else {
-        const rw=document.createElement('div'); rw.className='rewrite'; rw.innerHTML=`<b>為什麼？</b>${w.reason}`; div.appendChild(rw);
-      }
+      const rw=document.createElement('div'); rw.className='rewrite'; rw.innerHTML=`<b>學員中心轉譯：</b>${w.rewrite==='——'?'（此句本身已屬學員中心，請檢查分類）':w.rewrite}<br><span style="color:#6b7280">為什麼？${w.reason}</span>`; 
+      div.appendChild(rw);
       $badlist.appendChild(div);
     })
     $result.style.display='block';
-    if(score>=80) celebrate();
+    if(correct>=BANKS[currentLevel].gate.needRight) celebrate();
   }
 
   function useHint(){
     if(hintLeft<=0){ showToast('提示已用完'); return; }
     if(!activeCard){ showToast('請先點選一張卡片'); return; }
-    const key=Number(activeCard.dataset.key); const answer=BANK[key].type; const categories=['teacher','learner','over'];
-    // 50/50: 留下正確 + 一個隨機錯誤
+    const items = BANKS[currentLevel].items;
+    const key=Number(activeCard.dataset.key); const answer=items[key].type; const categories=['teacher','learner','over'];
     const wrongs = categories.filter(c=>c!==answer); const keep = wrongs[Math.floor(Math.random()*wrongs.length)];
     const options = [answer, keep].map(c=> c==='teacher'?'👩‍🏫 教師中心': c==='learner'?'🌱 學員中心（責任分級）':'💗 過度包容');
     showToast('可能是：'+options.join(' 或 '));
-    // 顯示簡短說明
-    const tip = BANK[key].reason;
+    const tip = items[key].reason;
     setTimeout(()=>{ showToast('線索：'+tip) }, 900);
     hintLeft--; $hintLeft.textContent=hintLeft;
   }
 
-  function showToast(msg){$toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},700)}
+  function showToast(msg){$toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},900)}
 
   // 觸控拖曳：定位與放置
-  function getBucketAt(x,y){
-    const els = document.elementsFromPoint(x,y);
-    return els.find(e=> e.classList && e.classList.contains('bucket')) || null;
-  }
+  function getBucketAt(x,y){ const els = document.elementsFromPoint(x,y); return els.find(e=> e.classList && e.classList.contains('bucket')) || null; }
   function clearHover(){ if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket=null; } }
   function moveFollow(el, x, y){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.transform='translate(-50%, -50%) scale(1.03)'; }
   function onPointerMove(e){ if(!pointerDragging||!activeCard) return; e.preventDefault();
@@ -348,19 +420,35 @@
     if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket.querySelector('.cards').appendChild(activeCard); showToast('已放置'); }
     else { originParent && originParent.appendChild(activeCard); }
     activeCard.classList.remove('follow'); activeCard.style.left=''; activeCard.style.top=''; activeCard.style.width=''; activeCard.style.transform='';
-    activeCard=null; pointerDragging=false; clearHover(); updateProgress();
+    activeCard=null; pointerDragging=false; clearHover(); updateProgress(BANKS[currentLevel].items.length);
   }
 
-  // Confetti celebration
+  // Confetti
   const canvas=document.getElementById('confetti'); const ctx=canvas.getContext('2d'); let pieces=[]; function resize(){canvas.width=innerWidth; canvas.height=innerHeight} window.addEventListener('resize', resize); resize();
   function celebrate(){
-    pieces=[...Array(120)].map(()=>({x:Math.random()*canvas.width, y:-20, r:6+Math.random()*8, vy:2+Math.random()*3, vx:(Math.random()-.5)*2, a:Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF'][Math.floor(Math.random()*4)]}));
-    let t=0; const tick=()=>{ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{p.y+=p.vy; p.x+=p.vx; p.a+=5; drawConfetti(p)}); t++; if(t<160) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height)}; tick();
+    pieces=[...Array(140)].map(()=>({x:Math.random()*canvas.width, y:-20, r:6+Math.random()*8, vy:2+Math.random()*3, vx:(Math.random()-.5)*2, a:Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF', '#D7E4FF'][Math.floor(Math.random()*5)]}));
+    let t=0; const tick=()=>{ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{p.y+=p.vy; p.x+=p.vx; p.a+=5; drawConfetti(p)}); t++; if(t<170) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height)}; tick();
   }
   function drawConfetti(p){ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore()}
 
+  // Load level
+  function loadLevel(lv){
+    // Intro & hints
+    $intro.textContent = BANKS[lv].intro;
+    hintLeft = BANKS[lv].hints; $hintLeft.textContent = hintLeft;
+    // Clear buckets
+    $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
+    // Render pool
+    renderPool(BANKS[lv].items);
+    // Result hide
+    $result.style.display='none';
+    // Mobile default bucket
+    $tabs.forEach((t,i)=> t.classList.toggle('active', i===0));
+    $buckets.forEach((b,i)=> b.classList.toggle('active', i===0));
+  }
+
   // init
-  renderPool();
+  loadLevel(1);
 </script>
 </body>
 </html>
