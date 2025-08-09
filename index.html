@@ -59,6 +59,33 @@
   th{text-align:left; color:#475569; font-weight:700}
   @media (max-width:700px){ .frames{grid-template-columns:1fr} .pillbtn{font-size:15px; padding:10px 8px} .helpgrid{grid-template-columns:1fr}
     .result-card{width:min(96%, 900px)} }
+
+/* --- Mobile first tweaks --- */
+body{margin:0;}
+.wrap{padding-top:8px;}
+@media (max-width: 480px){
+  .who-modal .panel{width:92vw; max-width:92vw; padding:14px;}
+  .who-modal input{font-size:16px; height:42px;}
+  header .title h1{font-size:20px}
+  .toolbar{gap:8px}
+  .toolbar .btn{padding:8px 12px}
+}
+/* Hint pill at top right */
+.guide-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:999px; background:linear-gradient(180deg,#F6F3FF,#ECE8FF);
+  border:1px solid #E3DEFF; box-shadow:0 4px 12px rgba(0,0,0,.05); cursor:pointer; font-weight:700
+}
+.guide-chip .blink{animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.35}}
+/* coachmark */
+.coach{
+  position:fixed; right:12px; top:118px; background:#111; color:#fff; padding:10px 12px; border-radius:10px; font-size:13px;
+  box-shadow:0 12px 28px rgba(0,0,0,.18); z-index:70
+}
+.coach:after{content:""; position:absolute; right:18px; top:-6px; width:10px; height:10px; background:#111; transform:rotate(45deg)}
+@media (max-width:480px){ .coach{top:138px; right:10px; font-size:12px} }
+
 </style>
 </head>
 <body>
@@ -282,5 +309,19 @@ window.addEventListener('DOMContentLoaded', ()=>{
   };
 });
 </script>
+
+<div class="who-modal" id="guideModal" style="display:none">
+  <div class="panel">
+    <h3 style="margin:0 0 6px">怎么玩？</h3>
+    <ol style="padding-left:18px; margin:6px 0 12px">
+      <li>先點 <b>「開始遊戲前請看看我」</b>，30 秒瞭解規則。</li>
+      <li>閱讀每個情境，將卡片選為：<b>教師中心</b>／<b>學員中心</b>／<b>過度包容</b>。</li>
+      <li>送出後可看詳解與「迷思地圖」。</li>
+    </ol>
+    <button class="btn primary" id="closeGuide">知道了</button>
+  </div>
+</div>
+<div class="coach" id="coachTip" style="display:none">新手？點「小教學」快速看玩法</div>
+
 </body>
 </html>
