@@ -4,9 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>為什麼要有 EPA？｜快思慢想 ✦</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#FAF7FF;
@@ -25,7 +22,7 @@
   html,body{height:100%}
   body{
     margin:0; 
-    font-family:"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, -apple-system, Arial;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial;
     background:
       radial-gradient(900px 600px at 110% -10%, #FFE9F3 0%, rgba(255,233,243,0) 60%),
       radial-gradient(900px 600px at -10% -10%, #E9EDFF 0%, rgba(233,237,255,0) 60%),
@@ -35,7 +32,7 @@
   .wrap{max-width:980px; margin:0 auto; padding:16px 16px 28px}
   header{display:flex; gap:12px; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap}
   .title{ display:flex; align-items:center; gap:12px; padding:10px 14px; background:#fff; border-radius:16px; box-shadow:var(--shadow); }
-  .title h1{font-family:"Baloo 2", "Noto Sans TC"; font-size:20px; margin:0}
+  .title h1{font-size:20px; margin:0; font-weight:700}
   .badge{font-size:12px; color:#4B5563; background:linear-gradient(180deg,#fff, #F6F9FF); border:1px solid #E8EBFF; padding:6px 10px; border-radius:999px}
   .toolbar{display:flex; gap:8px; flex-wrap:wrap}
   button{border:0; border-radius:14px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
@@ -96,7 +93,6 @@
 
   .confetti{position:fixed; inset:0; pointer-events:none}
 
-  /* Summary page */
   .summary{display:none; background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:14px}
   .summary h3{margin:0 0 8px}
   table{width:100%; border-collapse:separate; border-spacing:0 6px}
@@ -109,9 +105,13 @@
   .t-teacher{background:var(--pink)}
   .t-learner{background:var(--green)}
   .t-over{background:var(--yellow)}
+
+  /* JS status badge */
+  .jsok{position:fixed; top:10px; right:10px; background:#10b981; color:#fff; padding:6px 10px; border-radius:999px; font-size:12px; box-shadow:var(--shadow); display:none}
 </style>
 </head>
 <body>
+<div class="jsok" id="jsok">JS Loaded</div>
 <div class="wrap">
   <header>
     <div class="title">
@@ -199,52 +199,36 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  // ---- 題庫 ----
+  document.getElementById('jsok').style.display='block'; // JS status badge
+
   const BANKS = {
-    1: { // 關1：9題（各3）- 生活版（女友訓練男友）
-      gate: {needRight:7},
-      hints: 2,
-      intro: "關卡1：生活小劇場（女友訓練男友😆），先搞懂三類思維。",
-      items: [
-        // teacher x3
-        {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"你先洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
-        {text:"報告我幫你寫好，下次再教你怎麼寫。", type:"teacher", rewrite:"先讓你寫一版精要版，我一起補強關鍵。", reason:"包辦任務，剝奪練習機會。"},
-        {text:"我已經很忙了，等我有空再教你做飯。", type:"teacher", rewrite:"安排10分鐘迷你練習，今天先學打蛋與開火安全。", reason:"以教師時間為中心，缺乏規律化練習。"},
-        // learner x3
-        {text:"今天你負責倒垃圾，我提醒路線與時間點。", type:"learner", rewrite:"——", reason:"設定邊界與監督，屬責任分級的委託。"},
-        {text:"你先煎一顆蛋，我看一次，等下給2點建議。", type:"learner", rewrite:"——", reason:"可觀察＋具體回饋，逐步放權。"},
-        {text:"你先講今晚的約會流程，我再補充關鍵。", type:"learner", rewrite:"——", reason:"先讓學員輸出，教師把關缺口。"},
-        // over x3
-        {text:"你今天很累不要做家事了，我全包。", type:"over", rewrite:"把任務切小：你收碗，我刷鍋；維持最小責任。", reason:"過度保護，模糊責任界線。"},
-        {text:"怕你受挫，就不說剛剛哪裡做不好。", type:"over", rewrite:"針對行為給建議，不貼標籤，並說下一步作法。", reason:"以保護為名迴避回饋，影響成長。"},
-        {text:"你只要負責可愛就好，其他都我來。", type:"over", rewrite:"切出低風險任務讓你完成，建立可靠度。", reason:"取消責任，無法鍛鍊能力。"},
-      ]
-    },
-    2: { // 關2：12題（各4）- 臨床教育版
-      gate: {needRight:10},
-      hints: 2,
-      intro: "關卡2：把概念落回臨床教育情境。",
-      items: [
-        // teacher x4
-        {text:"今天交班很趕，就不要讓學員講了。", type:"teacher", rewrite:"讓學員先講精要版，我補關鍵並控風險。", reason:"以時間壓力取代學習機會。"},
-        {text:"我覺得他差不多了，可以放手讓他做。", type:"teacher", rewrite:"已達 3a 標準情境，半監督放手。", reason:"以主觀感覺，未對應等級與情境指標。"},
-        {text:"等我有空再帶他練。", type:"teacher", rewrite:"安排短時段微演練，每天有練習與回饋。", reason:"以教師時間為中心，缺乏規律化。"},
-        {text:"這次我先做示範，學員看就好。", type:"teacher", rewrite:"示範後切片段交給學員做。", reason:"示範後未轉交可委託片段。"},
-        // learner x4
-        {text:"抽血技巧不熟，先用 DOPS 集中練三次。", type:"learner", rewrite:"——", reason:"分離單一技能以 DOPS 練習支撐 EPA。"},
-        {text:"常遺漏交班重點，改用 ISBAR 並錄音回顧。", type:"learner", rewrite:"——", reason:"導入結構與自我回顧。"},
-        {text:"他昨天兩次高風險錯誤，今天改回全程監督。", type:"learner", rewrite:"——", reason:"依風險動態調整監督強度。"},
-        {text:"已在常規病人表現穩定，先讓他在標準情境半監督獨立。", type:"learner", rewrite:"——", reason:"按情境複雜度與可靠度放權。"},
-        // over x4
-        {text:"別跟他說錯在哪，怕打擊信心。", type:"over", rewrite:"聚焦行為與結果，給下一步具體作法。", reason:"迴避回饋，影響學習。"},
-        {text:"他都新人，先不要讓他做任何事。", type:"over", rewrite:"切出低風險片段，在監督下練習。", reason:"剝奪練習機會，無成長責任。"},
-        {text:"學員準備不足也沒關係，下次再說。", type:"over", rewrite:"界定最小安全任務與下次前的準備清單。", reason:"標準模糊，放任延宕。"},
-        {text:"為了和諧，錯誤就先不提了。", type:"over", rewrite:"先私下具體回饋，再約下一次檢核。", reason:"以和諧之名忽視安全與學習。"},
-      ]
-    }
+    1: {gate:{needRight:7}, hints:2, intro:"關卡1：生活小劇場（女友訓練男友😆），先搞懂三類思維。", items:[
+      {text:"我自己洗比較快，你下次再學就好。", type:"teacher", rewrite:"你先洗一件，我在旁邊看，結束給兩點回饋。", reason:"把效率擺第一，沒有切出可委託片段與回饋循環。"},
+      {text:"報告我幫你寫好，下次再教你怎麼寫。", type:"teacher", rewrite:"先讓你寫一版精要版，我一起補強關鍵。", reason:"包辦任務，剝奪練習機會。"},
+      {text:"我已經很忙了，等我有空再教你做飯。", type:"teacher", rewrite:"安排10分鐘迷你練習，今天先學打蛋與開火安全。", reason:"以教師時間為中心，缺乏規律化練習。"},
+      {text:"今天你負責倒垃圾，我提醒路線與時間點。", type:"learner", rewrite:"——", reason:"設定邊界與監督，屬責任分級的委託。"},
+      {text:"你先煎一顆蛋，我看一次，等下給2點建議。", type:"learner", rewrite:"——", reason:"可觀察＋具體回饋，逐步放權。"},
+      {text:"你先講今晚的約會流程，我再補充關鍵。", type:"learner", rewrite:"——", reason:"先讓學員輸出，教師把關缺口。"},
+      {text:"你今天很累不要做家事了，我全包。", type:"over", rewrite:"把任務切小：你收碗，我刷鍋；維持最小責任。", reason:"過度保護，模糊責任界線。"},
+      {text:"怕你受挫，就不說剛剛哪裡做不好。", type:"over", rewrite:"針對行為給建議，不貼標籤，並說下一步作法。", reason:"以保護為名迴避回饋，影響成長。"},
+      {text:"你只要負責可愛就好，其他都我來。", type:"over", rewrite:"切出低風險任務讓你完成，建立可靠度。", reason:"取消責任，無法鍛鍊能力。"},
+    ]},
+    2: {gate:{needRight:10}, hints:2, intro:"關卡2：把概念落回臨床教育情境。", items:[
+      {text:"今天交班很趕，就不要讓學員講了。", type:"teacher", rewrite:"讓學員先講精要版，我補關鍵並控風險。", reason:"以時間壓力取代學習機會。"},
+      {text:"我覺得他差不多了，可以放手讓他做。", type:"teacher", rewrite:"已達 3a 標準情境，半監督放手。", reason:"以主觀感覺，未對應等級與情境指標。"},
+      {text:"等我有空再帶他練。", type:"teacher", rewrite:"安排短時段微演練，每天有練習與回饋。", reason:"以教師時間為中心，缺乏規律化。"},
+      {text:"這次我先做示範，學員看就好。", type:"teacher", rewrite:"示範後切片段交給學員做。", reason:"示範後未轉交可委託片段。"},
+      {text:"抽血技巧不熟，先用 DOPS 集中練三次。", type:"learner", rewrite:"——", reason:"分離單一技能以 DOPS 練習支撐 EPA。"},
+      {text:"常遺漏交班重點，改用 ISBAR 並錄音回顧。", type:"learner", rewrite:"——", reason:"導入結構與自我回顧。"},
+      {text:"他昨天兩次高風險錯誤，今天改回全程監督。", type:"learner", rewrite:"——", reason:"依風險動態調整監督強度。"},
+      {text:"已在常規病人表現穩定，先讓他在標準情境半監督獨立。", type:"learner", rewrite:"——", reason:"按情境複雜度與可靠度放權。"},
+      {text:"別跟他說錯在哪，怕打擊信心。", type:"over", rewrite:"聚焦行為與結果，給下一步具體作法。", reason:"迴避回饋，影響學習。"},
+      {text:"他都新人，先不要讓他做任何事。", type:"over", rewrite:"切出低風險片段，在監督下練習。", reason:"剝奪練習機會，無成長責任。"},
+      {text:"學員準備不足也沒關係，下次再說。", type:"over", rewrite:"界定最小安全任務與下次前的準備清單。", reason:"標準模糊，放任延宕。"},
+      {text:"為了和諧，錯誤就先不提了。", type:"over", rewrite:"先私下具體回饋，再約下一次檢核。", reason:"以和諧之名忽視安全與學習。"},
+    ]}
   };
 
-  // ---- 生成 Summary ----
   function buildSummary(){
     const $summary = document.getElementById('summaryTables');
     $summary.innerHTML='';
@@ -270,7 +254,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // ---- 狀態 ----
   const $pool = document.getElementById('poolCards');
   const $buckets = [...document.querySelectorAll('.bucket')];
   const $tabs = [...document.querySelectorAll('.tab')];
@@ -289,29 +272,18 @@ document.addEventListener('DOMContentLoaded', function(){
   let activeCard = null;
   let hintLeft = 2; const $hintLeft = document.getElementById('hintLeft');
   let currentLevel = 1;
-  // 觸控拖曳狀態
   let pointerDragging=false; let dragOffsetX=0, dragOffsetY=0; let originParent=null; let currentHoverBucket=null;
 
-  // Level switching
   $levelTabs.forEach(tab=>{
     tab.addEventListener('click', ()=>{
       $levelTabs.forEach(t=>t.classList.remove('active'));
       tab.classList.add('active');
       const lv = tab.dataset.level;
-      if(lv==='S'){ // summary
-        $gameArea.style.display='none';
-        $summaryArea.style.display='block';
-        buildSummary();
-      }else{
-        $gameArea.style.display='block';
-        $summaryArea.style.display='none';
-        currentLevel = Number(lv);
-        loadLevel(currentLevel);
-      }
+      if(lv==='S'){ $gameArea.style.display='none'; $summaryArea.style.display='block'; buildSummary(); }
+      else { $gameArea.style.display='block'; $summaryArea.style.display='none'; currentLevel = Number(lv); loadLevel(currentLevel); }
     });
   });
 
-  // Bucket tabs (mobile)
   $tabs.forEach(tab => {
     tab.addEventListener('click', ()=>{
       $tabs.forEach(t=>t.classList.remove('active'));
@@ -359,7 +331,6 @@ document.addEventListener('DOMContentLoaded', function(){
     $progress.textContent=`${placed} / ${total} 已分類`;
   }
 
-  // Buckets: dragover/drop（桌機）
   $buckets.forEach(b=>{
     const box=b.querySelector('.cards');
     b.addEventListener('dragover', e=>{e.preventDefault(); box.classList.add('drop-highlight')});
@@ -374,7 +345,6 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   })
 
-  // Modal choose（手機備援）
   $modal.addEventListener('click', (e)=>{
     if(e.target.classList.contains('choice')){
       const target=e.target.dataset.target;
@@ -386,7 +356,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
-  // Buttons
   document.getElementById('btnReset').addEventListener('click', ()=>loadLevel(currentLevel));
   document.getElementById('btnShuffle').addEventListener('click', ()=>{renderPool(BANKS[currentLevel].items)});
   document.getElementById('btnCheck').addEventListener('click', checkAnswers);
@@ -399,14 +368,14 @@ document.addEventListener('DOMContentLoaded', function(){
       const key=Number(card.dataset.key); const answer=items[key].type;
       const parentBucket = card.closest('.bucket');
       const user = parentBucket ? parentBucket.dataset.category : 'pool';
-      if(user===answer){ correct++; sparkle(card) } 
+      if(user===answer){ correct++; } 
       else { if(user!=='pool') wrong.push({text:items[key].text, rewrite:items[key].rewrite, should:answer, reason:items[key].reason}) }
     });
-    $rightCount.textContent = correct;
-    $wrongCount.textContent = total - correct;
+    document.getElementById('rightCount').textContent = correct;
+    document.getElementById('wrongCount').textContent = total - correct;
     const need = BANKS[currentLevel].gate.needRight;
-    $gateText.textContent = `至少答對 ${need} 題`;
-    $badlist.innerHTML='';
+    document.getElementById('gateText').textContent = `至少答對 ${need} 題`;
+    const $badlist = document.getElementById('badlist'); $badlist.innerHTML='';
     wrong.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
       const shouldLabel = w.should==='teacher'?'教師中心': w.should==='learner'?'學員中心（責任分級）':'過度包容';
@@ -415,8 +384,7 @@ document.addEventListener('DOMContentLoaded', function(){
       div.appendChild(rw);
       $badlist.appendChild(div);
     })
-    $result.style.display='block';
-    if(correct>=need) celebrate();
+    document.getElementById('result').style.display='block';
   }
 
   function useHint(){
@@ -429,49 +397,39 @@ document.addEventListener('DOMContentLoaded', function(){
     showToast('可能是：'+options.join(' 或 '));
     const tip = items[key].reason;
     setTimeout(()=>{ showToast('線索：'+tip) }, 900);
-    hintLeft--; $hintLeft.textContent=hintLeft;
+    hintLeft--; document.getElementById('hintLeft').textContent=hintLeft;
   }
 
-  function showToast(msg){$toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},900)}
+  function showToast(msg){const $toast=document.getElementById('toast'); $toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},900)}
 
-  // 觸控拖曳：定位與放置
   function getBucketAt(x,y){ const els = document.elementsFromPoint(x,y); return els.find(e=> e.classList && e.classList.contains('bucket')) || null; }
-  function clearHover(){ if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket=null; } }
   function moveFollow(el, x, y){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.transform='translate(-50%, -50%) scale(1.03)'; }
   function onPointerMove(e){ if(!pointerDragging||!activeCard) return; e.preventDefault();
-    moveFollow(activeCard, e.clientX - dragOffsetX, e.clientY - dragOffsetY);
-    const b = getBucketAt(e.clientX, e.clientY); if(b!==currentHoverBucket){ clearHover(); if(b){ b.classList.add('hover'); currentHoverBucket=b; } }
+    moveFollow(activeCard, e.clientX - (dragOffsetX), e.clientY - (dragOffsetY));
+    const b = getBucketAt(e.clientX, e.clientY); if(b){ b.classList.add('hover'); }
   }
   function onPointerUp(e){
     window.removeEventListener('pointermove', onPointerMove);
     if(!activeCard) return;
-    if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket.querySelector('.cards').appendChild(activeCard); showToast('已放置'); }
-    else { originParent && originParent.appendChild(activeCard); }
+    const b = getBucketAt(e.clientX, e.clientY);
+    if(b){ b.querySelector('.cards').appendChild(activeCard); showToast('已放置'); }
     activeCard.classList.remove('follow'); activeCard.style.left=''; activeCard.style.top=''; activeCard.style.width=''; activeCard.style.transform='';
-    activeCard=null; pointerDragging=false; clearHover(); updateProgress(BANKS[currentLevel].items.length);
+    activeCard=null; pointerDragging=false; 
+    updateProgress(BANKS[currentLevel].items.length);
   }
-
-  // Confetti
-  const canvas=document.getElementById('confetti'); const ctx=canvas.getContext('2d'); let pieces=[]; function resize(){canvas.width=innerWidth; canvas.height=innerHeight} window.addEventListener('resize', resize); resize();
-  function celebrate(){
-    pieces=[...Array(140)].map(()=>({x:Math.random()*canvas.width, y:-20, r:6+Math.random()*8, vy:2+Math.random()*3, vx:(Math.random()-.5)*2, a:Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF', '#D7E4FF'][Math.floor(Math.random()*5)]}));
-    let t=0; const tick=()=>{ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{p.y+=p.vy; p.x+=p.vx; p.a+=5; drawConfetti(p)}); t++; if(t<170) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height)}; tick();
-  }
-  function drawConfetti(p){ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore()}
 
   function loadLevel(lv){
-    $intro.textContent = BANKS[lv].intro;
-    hintLeft = BANKS[lv].hints; $hintLeft.textContent = hintLeft;
+    document.getElementById('levelIntro').textContent = BANKS[lv].intro;
+    hintLeft = BANKS[lv].hints; document.getElementById('hintLeft').textContent = hintLeft;
     $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
     renderPool(BANKS[lv].items);
-    $result.style.display='none';
+    document.getElementById('result').style.display='none';
     $tabs.forEach((t,i)=> t.classList.toggle('active', i===0));
     $buckets.forEach((b,i)=> b.classList.toggle('active', i===0));
   }
 
-  // init
   loadLevel(1);
-}); // DOMContentLoaded
+});
 </script>
 </body>
 </html>
