@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{ --bg:#FAF7FF; --card:#FFFFFF; --shadow:0 6px 18px rgba(0,0,0,.08); --t:#222; --muted:#667085; --ring:#9BA6FF; }
+  :root{ --bg:#FAF7FF; --card:#FFFFFF; --shadow:0 6px 18px rgba(0,0,0,.08); --t:#222; --muted:#667085; --ring:#9BA6FF; --good:#55C595; --warn:#FFB84D; --bad:#FF7A88;}
   *{box-sizing:border-box} html,body{height:100%}
   body{ margin:0; font-family:"Baloo 2","Noto Sans TC", ui-sans-serif, system-ui, -apple-system, "PingFang TC","Microsoft JhengHei", Arial;
     background: radial-gradient(900px 600px at 110% -10%, #FFE9F3 0%, rgba(255,233,243,0) 60%), radial-gradient(900px 600px at -10% -10%, #E9EDFF 0%, rgba(233,237,255,0) 60%), var(--bg); color:var(--t);}
@@ -22,6 +22,7 @@
   button:active{transform:translateY(1px)}
   .primary{background:linear-gradient(180deg,#7A86FF, #6C79FF); color:#fff}
   .ghost{background:#fff}
+  .success{background:linear-gradient(180deg,#75D7A8,#55C595); color:#fff}
   .leveltab{background:#fff}
   .leveltab.active{background:#EEF0FF; border:1px solid #C9CDFF}
   .hint{margin:10px 0 16px; color:var(--muted); font-size:14px}
@@ -37,7 +38,7 @@
   .pillbtn[data-ans="learner"]{background:linear-gradient(180deg,#ffffff,#eafff2)}
   .pillbtn[data-ans="over"]{background:linear-gradient(180deg,#ffffff,#fff3cf)}
   .result-modal{position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:8; background:rgba(0,0,0,.25)}
-  .result-card{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px 20px; width:min(92%,720px); text-align:center}
+  .result-card{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px 20px; width:min(92%,820px); text-align:center}
   .result-card h3{margin:0 0 10px} .result-card .nums{font-size:18px; font-weight:800}
   .result-card .btns{display:flex; gap:10px; justify-content:center; margin-top:12px; flex-wrap:wrap}
   .wronglist{margin-top:12px; text-align:left} .wrongitem{background:#fff9fb; border:1px solid #ffd7e0; border-radius:12px; padding:10px; margin:6px 0}
@@ -45,7 +46,7 @@
   .footerbar{position:fixed; left:0; right:0; bottom:0; z-index:7; display:flex; justify-content:center; padding:10px}
   .footerbar .bar{background:rgba(255,255,255,.85); backdrop-filter: blur(6px); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:8px; display:flex; gap:8px; box-shadow:var(--shadow)}
   .modal{position:fixed; inset:0; background:rgba(0,0,0,.15); display:none; align-items:center; justify-content:center; z-index:9}
-  .cardhelp{background:#fff; width:min(92%,800px); border-radius:18px; box-shadow:var(--shadow); padding:16px}
+  .cardhelp{background:#fff; width:min(92%,900px); border-radius:18px; box-shadow:var(--shadow); padding:16px}
   .helpgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
   .helpitem{background:#fff; border-radius:16px; padding:12px; box-shadow:var(--shadow)}
   .helpitem.teacher{background:linear-gradient(180deg,#fff,#ffe6eb)} .helpitem.learner{background:linear-gradient(180deg,#fff,#eafff2)} .helpitem.over{background:linear-gradient(180deg,#fff,#fff3cf)}
@@ -53,7 +54,15 @@
   canvas#confetti{position:fixed; inset:0; pointer-events:none; z-index:6}
   .music{display:flex; align-items:center; gap:6px; background:#fff; border-radius:999px; padding:8px 10px; box-shadow:var(--shadow)}
   .music input[type="range"]{width:100px}
-  @media (max-width:700px){ .frames{grid-template-columns:1fr} .pillbtn{font-size:15px; padding:10px 8px} .helpgrid{grid-template-columns:1fr} }
+  .badge{background:#fff; border:2px dashed #a7f3d0; color:#047857; padding:10px 12px; border-radius:14px; cursor:pointer; box-shadow:var(--shadow);}
+  .maptag{display:inline-flex; align-items:center; gap:6px; background:#fff; border-radius:12px; padding:8px 10px; border:1px solid #E0E7FF; box-shadow:var(--shadow);}
+  .legend{display:flex; gap:8px; flex-wrap:wrap; font-size:13px; margin:8px 0}
+  .tag{padding:2px 8px; border-radius:999px; border:1px solid rgba(0,0,0,.08)}
+  .tag.t{background:#ffe6eb} .tag.l{background:#eafff2} .tag.o{background:#fff3cf}
+  table{width:100%; border-collapse:collapse; font-size:14px} th,td{padding:8px 10px; border-bottom:1px solid #f1f5f9; vertical-align:top}
+  th{text-align:left; color:#475569; font-weight:700}
+  @media (max-width:700px){ .frames{grid-template-columns:1fr} .pillbtn{font-size:15px; padding:10px 8px} .helpgrid{grid-template-columns:1fr}
+    .result-card{width:min(96%, 900px)} }
 </style>
 </head>
 <body>
@@ -69,6 +78,7 @@
       <button class="leveltab active" data-level="1">關卡1</button>
       <button class="leveltab" data-level="2">關卡2</button>
       <button class="leveltab" data-level="H">說明專區</button>
+      <button class="badge" id="btnReadFirst">👀 開始遊戲前請看看我</button>
       <div class="music" id="musicBox">
         🎵
         <button class="ghost" id="btnMusic">播放</button>
@@ -78,10 +88,11 @@
     <div class="toolbar">
       <button class="ghost" id="btnResetTop">重置本關</button>
       <button class="primary" id="btnSubmitTop">送出本關</button>
+      <span class="maptag" id="btnMapTop">🗺️🐶 迷思地圖</span>
     </div>
   </header>
 
-  <p class="hint" id="intro">關卡1：臨床迷你劇本（每次都會<b>洗牌</b>），請把下列情境分類。若未帶 <code>?tid=</code> 與 <code>&group=</code>，將先請你輸入。</p>
+  <p class="hint" id="intro">關卡1：臨床迷你劇本（每次都會<b>洗牌</b>），請把下列情境分類。未帶 <code>?tid=</code> 與 <code>&unit=</code> 會請你先輸入。</p>
 
   <div id="quiz"></div>
 </div>
@@ -89,6 +100,7 @@
 <div class="footerbar"><div class="bar">
   <button class="ghost" id="btnResetBottom">重置本關</button>
   <button class="primary" id="btnSubmitBottom">送出本關</button>
+  <span class="maptag" id="btnMapBottom">🗺️🐶 迷思地圖</span>
 </div></div>
 
 <div class="modal" id="helpModal">
@@ -102,7 +114,7 @@
         <div style="font-size:14px; color:#374151">依學員能力設定可委託任務、即時回饋與漸進放手，在安全情境中承擔責任。</div>
       </div>
       <div class="helpitem over"><h4 style="margin:0 0 6px">💗 過度包容（不健康）</h4>
-        <div style="font-size:14px; color:#374151">模糊標準或回避回饋，短期看似保護，長期反而阻礙學習與安全。</div>
+        <div style="font-size:14px; color:#374151">模糊標準或回避回饋，短期看似保護，長期反而阻礙學習與安全。<br>👉 解套：給具體事實與下一步建議，以行為為焦點。</div>
       </div>
     </div>
     <div style="text-align:right; margin-top:10px"><button class="ghost" id="closeHelp">關閉</button></div>
@@ -118,7 +130,21 @@
       <button class="ghost" id="closeResult">關閉</button>
       <button class="primary" id="retry">再玩一次</button>
       <button class="primary" id="goL2">前往關卡2</button>
+      <span class="maptag" id="btnMapFromModal">🗺️🐶 迷思地圖</span>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="mapModal">
+  <div class="cardhelp">
+    <h3 style="margin:0 0 8px">🗺️ 迷思地圖（做錯的題目與解釋）</h3>
+    <div class="legend">
+      <span class="tag t">教師中心</span>
+      <span class="tag l">學員中心</span>
+      <span class="tag o">過度包容</span>
+    </div>
+    <div id="mapContent" style="overflow:auto; max-height:60vh"></div>
+    <div style="text-align:right; margin-top:10px"><button class="ghost" id="closeMap">關閉</button></div>
   </div>
 </div>
 
@@ -126,11 +152,11 @@
   <div class="cardhelp" style="max-width:520px">
     <h3 style="margin:0 0 8px">請先輸入識別資訊</h3>
     <div style="display:grid; gap:10px">
-      <label>老師：請輸入你的全名（必填）
+      <label>教師姓名（必填）
         <input id="inTid" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：王小美">
       </label>
-      <label>班級 / 群組（選填）
-        <input id="inGroup" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：護教師培-A 班">
+      <label>單位 / 部門（選填）
+        <input id="inUnit" class="ghost" style="width:100%; padding:10px; border-radius:10px; border:1px solid #e5e7eb" placeholder="例如：內外科部 / 教學部">
       </label>
     </div>
     <div style="text-align:right; margin-top:10px"><button class="primary" id="saveWho">開始</button></div>
@@ -146,7 +172,9 @@ const musicSrc = "https://cdn.pixabay.com/download/audio/2023/03/08/audio_2ac7a1
 
 const usp = new URLSearchParams(location.search);
 let TID = usp.get('tid') || '';
-let GROUP = usp.get('group') || '';
+let UNIT = usp.get('unit') || '';
+
+const LABELS = { teacher:'教師中心', learner:'學員中心', over:'過度包容' };
 
 const BANKS = {
   1: [
@@ -180,20 +208,18 @@ let currentLevel = 1;
 let answered = new Map();
 let startTimes = new Map();
 let submitted = false;
+let cachedWrongs = [];
 const quiz = document.getElementById('quiz');
 
 const bgm = document.getElementById('bgm'); bgm.src = musicSrc; bgm.volume = 0.5;
 document.getElementById('vol').addEventListener('input', e => bgm.volume = +e.target.value);
-document.getElementById('btnMusic').addEventListener('click', ()=>{
-  if (bgm.paused){ bgm.play(); document.getElementById('btnMusic').textContent='暫停'; }
-  else { bgm.pause(); document.getElementById('btnMusic').textContent='播放'; }
-});
+document.getElementById('btnMusic').addEventListener('click', ()=>{ if (bgm.paused){ bgm.play(); document.getElementById('btnMusic').textContent='暫停'; } else { bgm.pause(); document.getElementById('btnMusic').textContent='播放'; }});
 
 function logAnswer(payload){ try{ fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}); }catch(e){} }
 function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
 
 function renderLevel(lv){
-  currentLevel = lv; answered.clear(); startTimes.clear(); submitted=false;
+  currentLevel = lv; answered.clear(); startTimes.clear(); submitted=false; cachedWrongs=[];
   document.getElementById('intro').innerHTML = `關卡${lv}：臨床迷你劇本（每次都會<b>洗牌</b>），請把下列情境分類。`;
   document.getElementById('resultModal').style.display='none';
   quiz.innerHTML='';
@@ -227,7 +253,7 @@ function choose(item, ans, el){
   el.querySelector(`.pillbtn[data-ans="${ans}"]`).style.outline='3px solid var(--ring)';
   const begin = startTimes.get(item.id) || performance.now();
   const elapsed = Math.max(0, Math.round(performance.now() - begin));
-  logAnswer({ tid:TID, group:GROUP, level:currentLevel, item_id:item.id, chosen:ans, truth:item.type, correct:(ans===item.type), used_hint:0, time_ms:elapsed, device_width:innerWidth, user_agent:navigator.userAgent });
+  logAnswer({ tid:TID, unit:UNIT, level:currentLevel, item_id:item.id, chosen:ans, truth:item.type, correct:(ans===item.type), used_hint:0, time_ms:elapsed, device_width:innerWidth, user_agent:navigator.userAgent });
 }
 
 function submitLevel(){
@@ -238,12 +264,13 @@ function submitLevel(){
     if(ans===it.type) correct++;
     else wrongs.push({ id:it.id, should:it.type, scene:it.scene, teacher:it.t, why:it.why, chosen: ans||'(未作答)' });
   });
+  cachedWrongs = wrongs;
   document.getElementById('ok').textContent=correct;
   document.getElementById('bad').textContent=items.length - correct;
   const box = document.getElementById('wronglist'); box.innerHTML='';
   if(wrongs.length){
     wrongs.forEach(w=>{
-      const label = w.should==='teacher'?'教師中心': w.should==='learner'?'學員中心':'過度包容';
+      const label = LABELS[w.should];
       const div = document.createElement('div'); div.className='wrongitem';
       div.innerHTML = `<div><b>應分類：</b>${label}　<span style="color:#6b7280">(${w.id})</span></div>
                        <div style="margin-top:6px"><b>情境：</b>${w.scene}</div>
@@ -255,10 +282,32 @@ function submitLevel(){
     box.innerHTML = `<div class="wrongitem" style="text-align:center">太強了！本關全對 🎉</div>`;
   }
   document.getElementById('resultModal').style.display='flex'; submitted = true;
-  logAnswer({ tid:TID, group:GROUP, level:currentLevel, item_id:'SUMMARY', chosen:correct + '/' + items.length, truth:'-', correct:true, used_hint:0, time_ms:0, device_width:innerWidth, user_agent:navigator.userAgent });
+  logAnswer({ tid:TID, unit:UNIT, level:currentLevel, item_id:'SUMMARY', chosen:correct + '/' + items.length, truth:'-', correct:true, used_hint:0, time_ms:0, device_width:innerWidth, user_agent:navigator.userAgent });
   celebrate();
 }
 
+function renderMap(){
+  const host = document.getElementById('mapContent'); host.innerHTML='';
+  if(!cachedWrongs.length){ host.innerHTML = `<div class="wrongitem">目前尚無錯題。完成一關後再來看看地圖！</div>`; return; }
+  const rows = cachedWrongs.map(w=>{ 
+    const correct = LABELS[w.should];
+    const mine = w.chosen==='(未作答)' ? '未作答' : LABELS[w.chosen];
+    return `<tr>
+      <td><code>${w.id}</code></td>
+      <td>${w.scene}</td>
+      <td><span class="tag ${w.should==='teacher'?'t': w.should==='learner'?'l':'o'}">${correct}</span></td>
+      <td><span class="tag ${w.chosen==='teacher'?'t': w.chosen==='learner'?'l': w.chosen==='over'?'o':''}">${mine}</span></td>
+      <td>${w.why}</td>
+    </tr>`;
+  }).join('');
+  host.innerHTML = `<table>
+    <thead><tr><th>題號</th><th>情境</th><th>正確</th><th>你的選擇</th><th>為什麼是正解？ / 解套秘笈</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  document.getElementById('mapModal').style.display='flex';
+}
+
+// tabs & buttons
 document.querySelectorAll('.leveltab').forEach(tab=>{
   tab.addEventListener('click', ()=>{
     document.querySelectorAll('.leveltab').forEach(t=>t.classList.remove('active'));
@@ -268,6 +317,7 @@ document.querySelectorAll('.leveltab').forEach(tab=>{
     else { renderLevel(Number(lv)); }
   });
 });
+document.getElementById('btnReadFirst').addEventListener('click', ()=> document.getElementById('helpModal').style.display='flex');
 document.getElementById('closeHelp').addEventListener('click', ()=>document.getElementById('helpModal').style.display='none');
 document.getElementById('btnResetTop').addEventListener('click', ()=>renderLevel(currentLevel));
 document.getElementById('btnResetBottom').addEventListener('click', ()=>renderLevel(currentLevel));
@@ -276,7 +326,10 @@ document.getElementById('btnSubmitBottom').addEventListener('click', submitLevel
 document.getElementById('closeResult').addEventListener('click', ()=>document.getElementById('resultModal').style.display='none');
 document.getElementById('retry').addEventListener('click', ()=>{ document.getElementById('resultModal').style.display='none'; renderLevel(currentLevel); });
 document.getElementById('goL2').addEventListener('click', ()=>{ document.getElementById('resultModal').style.display='none'; document.querySelectorAll('.leveltab').forEach(t=>t.classList.remove('active')); document.querySelector('.leveltab[data-level="2"]').classList.add('active'); renderLevel(2); });
+['btnMapTop','btnMapBottom','btnMapFromModal'].forEach(id=> document.getElementById(id).addEventListener('click', renderMap));
+document.getElementById('closeMap').addEventListener('click', ()=> document.getElementById('mapModal').style.display='none');
 
+// confetti
 const canvas = document.getElementById('confetti'); const ctx = canvas.getContext('2d');
 function resize(){ canvas.width = innerWidth; canvas.height = innerHeight } window.addEventListener('resize', resize); resize();
 let pieces = [];
@@ -287,8 +340,8 @@ function askWhoIfNeeded(){
   const m = document.getElementById('whoModal'); m.style.display='flex';
   document.getElementById('saveWho').onclick = ()=>{
     TID = (document.getElementById('inTid').value || '').trim();
-    GROUP = (document.getElementById('inGroup').value || '').trim();
-    if(!TID){ alert('請輸入你的全名'); return; }
+    UNIT = (document.getElementById('inUnit').value || '').trim();
+    if(!TID){ alert('請輸入教師姓名'); return; }
     m.style.display='none'; renderLevel(1);
   };
 }
