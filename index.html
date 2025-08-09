@@ -253,7 +253,7 @@ document.getElementById('btnResetBottom').addEventListener('click', ()=>renderLe
 document.getElementById('btnSubmitTop').addEventListener('click', submitLevel);
 document.getElementById('btnSubmitBottom').addEventListener('click', submitLevel);
 document.getElementById('closeResult').addEventListener('click', ()=>document.getElementById('resultModal').style.display='none');
-document.getElementById('closeResultTop').addEventListener('click', ()=>document.getElementById('resultModal').style.display='none'));
+document.getElementById('closeResultTop').addEventListener('click', ()=>document.getElementById('resultModal').style.display='none');
 document.getElementById('retry').addEventListener('click', ()=>{ document.getElementById('resultModal').style.display='none'; renderLevel(currentLevel); });
 document.getElementById('goL2').addEventListener('click', ()=>{ document.getElementById('resultModal').style.display='none'; document.querySelectorAll('.leveltab').forEach(t=>t.classList.remove('active')); document.querySelector('.leveltab[data-level="2"]').classList.add('active'); renderLevel(2); });
 ['btnMapTop','btnMapBottom','btnMapFromModal'].forEach(id=> document.getElementById(id).addEventListener('click', renderMap));
