@@ -75,7 +75,7 @@
       <div class="music" id="musicBox" style="display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:8px 10px;box-shadow:var(--shadow)">
         🎵
         <button class="ghost" id="btnMusic">播放</button>
-        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.5" title="音量" style="width:110px">
+        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.6" title="音量" style="width:110px">
       </div>
     </div>
     <div class="toolbar">
@@ -144,7 +144,7 @@
   </div>
 </div>
 
-<div class="modal" id="whoModal" style="display:none">
+<div class="modal" id="whoModal">
   <div class="cardhelp" style="max-width:520px">
     <h3 style="margin:0 0 8px">請先輸入識別資訊</h3>
     <div style="display:grid; gap:10px">
@@ -165,12 +165,13 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzfdyabwrsdhxau9k8IoeBEx4wTd_aCAd8hOh3WyCMJBlN9b4EbetSIkvssAZb5rVt_/exec';
 const musicSrc = 'https://cdn.pixabay.com/download/audio/2022/03/15/audio_7cf8f2c3d1.mp3?filename=happy-day-112193.mp3';
 
+// identity
 const usp = new URLSearchParams(location.search);
 let TID = usp.get('tid') || '';
 let UNIT = usp.get('unit') || '';
 
+// labels & bank (同前版)
 const LABELS = { teacher:'教師中心', learner:'學員中心', over:'過度包容' };
-
 const BANKS = {
   1: [
     { id:'L1-01', type:'teacher', scene:'交班前 5 分鐘，值班繁忙。', t:'這次交班時間很緊，我先說完重點，之後有機會再讓你嘗試。', s:'好的。', why:'以時間壓力為由收回練習，未設計低風險可委託片段（如精要版交班）。' },
@@ -199,6 +200,7 @@ const BANKS = {
   ]
 };
 
+// state
 let currentLevel = 1;
 let answered = new Map();
 let startTimes = new Map();
@@ -210,9 +212,11 @@ const bgm = document.getElementById('bgm'); bgm.src = musicSrc; bgm.volume = 0.6
 document.getElementById('vol').addEventListener('input', e => bgm.volume = +e.target.value);
 document.getElementById('btnMusic').addEventListener('click', ()=>{ if (bgm.paused){ bgm.play(); document.getElementById('btnMusic').textContent='暫停'; } else { bgm.pause(); document.getElementById('btnMusic').textContent='播放'; } });
 
+// utils
 function logAnswer(payload){ try{ fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}); }catch(e){} }
 function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]] } return a; }
 
+// render
 function renderLevel(lv){ currentLevel = lv; answered.clear(); startTimes.clear(); cachedWrongs=[]; document.getElementById('resultModal').style.display='none'; quiz.innerHTML=''; const items = shuffle(BANKS[lv]); items.forEach(item=> quiz.appendChild(comicItem(item)) ); window.scrollTo({top:0, behavior:'smooth'}); }
 
 function comicItem(item){ const el = document.createElement('div'); el.className='comic'; el.dataset.id=item.id; el.dataset.type=item.type;
@@ -258,9 +262,20 @@ function resize(){ canvas.width = innerWidth; canvas.height = innerHeight } wind
 let pieces = [];
 function celebrate(){ pieces = Array.from({length:140}, ()=> ({ x: Math.random()*canvas.width, y: -20-Math.random()*40, r: 6+Math.random()*8, vy: 2+Math.random()*3, vx: (Math.random()-.5)*2.2, a: Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF'][Math.floor(Math.random()*4)] })); let t=0; (function tick(){ ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{ p.y+=p.vy; p.x+=p.vx; p.a+=5; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore(); }); if((t++)<180) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height); })(); }
 
-// ask who
-function askWhoIfNeeded(){ if (TID) return renderLevel(1); const m = document.getElementById('whoModal'); m.style.display='flex'; document.getElementById('saveWho').onclick = ()=>{ TID = (document.getElementById('inTid').value || '').trim(); UNIT = (document.getElementById('inUnit').value || '').trim(); if(!TID){ alert('請輸入教師姓名'); return; } m.style.display='none'; renderLevel(1); }; }
-askWhoIfNeeded();
+// always show who-modal at start; prefill from URL if present
+window.addEventListener('DOMContentLoaded', ()=>{
+  const m = document.getElementById('whoModal');
+  document.getElementById('inTid').value = TID;
+  document.getElementById('inUnit').value = UNIT;
+  m.style.display='flex';
+  document.getElementById('saveWho').onclick = ()=>{
+    TID = (document.getElementById('inTid').value || '').trim();
+    UNIT = (document.getElementById('inUnit').value || '').trim();
+    if(!TID){ alert('請輸入教師姓名'); return; }
+    m.style.display='none';
+    renderLevel(1);
+  };
+});
 </script>
 </body>
 </html>
