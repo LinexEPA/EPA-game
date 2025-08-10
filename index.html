@@ -2,297 +2,319 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
-<title>為什麼要有 EPA？｜快思慢想 v7</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>為什麼要有 EPA？｜快思慢想</title>
 <style>
 :root{
-  --bg:#FFF6F8;
-  --card:#fff;
-  --ink:#1f2937;
-  --muted:#6b7280;
-  --brand:#6C79FF;
-  --ok:#21c08b;
-  --warn:#ffb84d;
-  --bad:#ff7a88;
-  --pink:#FFDCE5;
-  --green:#EAFBF3;
-  --yellow:#FFF6D8;
-  --shadow:0 8px 20px rgba(0,0,0,.06);
-  --radius:18px;
-  --gap:10px;
+  --bg:#FFF6F8; --card:#fff; --ink:#1f2937; --muted:#6b7280;
+  --brand:#6C79FF; --ok:#21c08b; --warn:#ffb84d; --bad:#ff7a88;
+  --pink:#FFE8ED; --green:#E8FFF1; --yellow:#FFF2C6;
+  --shadow:0 8px 20px rgba(0,0,0,.06); --radius:18px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:
  radial-gradient(1000px 700px at 85% -10%, #ffe9f3 0, rgba(255,233,243,0) 70%), var(--bg);
  color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Inter","Noto Sans TC","Segoe UI",Roboto,Helvetica,Arial}
-.wrap{max-width:880px;margin:0 auto;padding:10px 14px 80px}
-.topbar{display:flex;align-items:center;justify-content:space-between;margin:4px 0 10px;gap:10px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;background:var(--card);padding:10px 12px;border-radius:14px;box-shadow:var(--shadow)}
+.wrap{max-width:900px;margin:0 auto;padding:12px 14px 100px}
+.header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.06)}
+.bar{max-width:900px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;gap:10px;align-items:center;background:var(--card);padding:10px 12px;border-radius:14px;box-shadow:var(--shadow);font-weight:800}
 h1{margin:0;font-size:18px}
-.tools{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:0;border-radius:12px;padding:10px 14px;background:var(--card);box-shadow:var(--shadow);font-weight:700;cursor:pointer}
-.primary{background:linear-gradient(180deg,#7A86FF,#6C79FF);color:#fff}
-.ghost{background:var(--card)}
-.badge{font-size:12px;color:#4B5563;background:linear-gradient(180deg,#fff,#F6F9FF);border:1px solid #E8EBFF;padding:6px 10px;border-radius:999px}
-.hintbar{margin:6px 0 10px;background:var(--card);border-left:6px solid #6C79FF;border-radius:10px;padding:10px 12px;box-shadow:var(--shadow);font-size:14px}
-.stage{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:10px}
-.scene{margin:8px 0;background:linear-gradient(180deg,#fff,#fdfdfd);border:1px solid rgba(0,0,0,.05);border-radius:16px;padding:10px}
-.scene h3{margin:0 0 6px;font-size:14px;color:#111;display:flex;align-items:center;gap:8px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:12px;padding:10px 14px;background:var(--card);box-shadow:var(--shadow);font-weight:800;cursor:pointer}
+.btn.primary{background:linear-gradient(180deg,#7A86FF,#6C79FF);color:#fff}
+.btn.ghost{background:#fff}
+.notice{margin:10px 0 8px;background:#FFF6E6;border:1px dashed #F6C453;color:#7a5600;padding:10px 12px;border-radius:12px;font-weight:700}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06)}
+.panel{padding:12px}
+.scene{margin:10px 0}
+.scene .head{font-weight:800;color:#ef476f;margin-bottom:6px}
 .bubble{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:12px;padding:10px;margin:6px 0}
 .choices{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
-@media(min-width:560px){.choices{grid-template-columns:repeat(3,1fr)}}
-.choice{user-select:none;background:#fff;border-radius:14px;border:1px solid rgba(0,0,0,.06);padding:14px;text-align:center;font-weight:800;box-shadow:var(--shadow);cursor:pointer}
-.choice[data-k="teacher"]{background:linear-gradient(180deg,#fff,#ffe9f1)}
-.choice[data-k="learner"]{background:linear-gradient(180deg,#fff,#eafbf3)}
-.choice[data-k="over"]{background:linear-gradient(180deg,#fff,#fff6d8)}
+@media(min-width:640px){.choices{grid-template-columns:repeat(3,1fr)}}
+.choice{display:block;text-align:center;padding:12px;border-radius:12px;border:1px solid rgba(0,0,0,.06);font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
+.choice[data-k="teacher"]{background:linear-gradient(180deg,#fff,#ffe6ea)}
+.choice[data-k="learner"]{background:linear-gradient(180deg,#fff,#eafff3)}
+.choice[data-k="over"]{background:linear-gradient(180deg,#fff,#fff2da)}
+.choice input{display:none}
 .choice.active{outline:3px solid #6C79FF}
-.footerbar{position:sticky;bottom:10px;left:0;right:0;display:flex;gap:8px;justify-content:center;margin-top:12px}
-.pill{background:#fff;border-radius:999px;box-shadow:var(--shadow);padding:10px 14px}
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:50;padding:14px}
-.sheet{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:520px;width:100%}
+.footer{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;max-width:920px;width:calc(100% - 16px);z-index:30}
+.dock{display:flex;gap:8px;justify-content:flex-end;align-items:center;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:var(--shadow);padding:8px}
+.pill{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);font-size:12px;color:#555}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:40;padding:14px}
+.sheet{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:560px;width:100%}
 .sheet h3{margin:6px 0 10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-input[type=text]{width:100%;padding:12px 12px;border:1px solid #e5e7eb;border-radius:12px}
-label{font-size:14px;color:#374151}
+.input{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.input input{padding:12px;border:1px solid #e5e7eb;border-radius:12px;font-size:16px}
 .small{font-size:12px;color:#6b7280}
-.result{display:none;margin-top:8px;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:12px}
+.result{display:none;margin-top:10px}
 .badlist{display:grid;grid-template-columns:1fr;gap:8px}
-.baditem{background:linear-gradient(180deg,#fff,#fff9fc);border:1px solid #ffe1ea;border-radius:12px;padding:10px}
-.baditem .rw{background:#f1fafd;border:1px dashed #bfe8ff;border-radius:10px;padding:8px;margin-top:6px}
-.toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);background:#111;color:#fff;border-radius:999px;padding:8px 12px;display:none;z-index:60}
+.baditem{background:linear-gradient(180deg,#fff,#FFF9FB);border:1px solid #FFE1E6;border-radius:12px;padding:10px}
+.baditem .rw{background:#F0FFF7;border:1px dashed #BEE8D2;border-radius:10px;padding:8px;margin-top:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;display:none;z-index:60}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="topbar">
-    <div class="brand"><span>📚</span><h1>為什麼要有 EPA？｜快思慢想</h1></div>
-    <div class="tools">
-      <button class="btn ghost" id="btnL1">關卡1</button>
-      <button class="btn ghost" id="btnL2">關卡2</button>
+<header class="header">
+  <div class="bar">
+    <div class="brand">📚 <h1>為什麼要有 EPA？｜快思慢想</h1></div>
+    <div class="actions">
+      <button class="btn ghost" id="btnL1">關卡 1</button>
+      <button class="btn ghost" id="btnL2">關卡 2</button>
       <button class="btn primary" id="btnHow">👀 開始遊戲前請看我</button>
     </div>
   </div>
-  <div class="hintbar">以下對話情境，你覺得是以誰為中心呢？</div>
+</header>
 
-  <section class="stage">
-    <div id="pool"></div>
-    <div class="result" id="result">
-      <h3>結果</h3>
-      <p>本關答對 <b id="okn">0</b> 題、答錯 <b id="wn">0</b> 題。</p>
-      <div class="badlist" id="badlist"></div>
-    </div>
+<div class="wrap">
+  <div class="notice">以下對話情境，你覺得是以誰為中心呢？（👩‍🏫 教師中心 / 🌱 學員中心（責任分級） / 💗 過度包容）</div>
+  <section id="board" class="card panel"></section>
+
+  <section id="resultPanel" class="card panel result">
+    <h3>結果</h3>
+    <p>本關答對 <b id="okn">0</b> 題、答錯 <b id="wn">0</b> 題。</p>
+    <div id="badlist" class="badlist"></div>
   </section>
-
-  <div class="footerbar">
-    <button class="pill" id="btnReset">重置本關</button>
-    <button class="pill primary" id="btnSubmit">送出本關</button>
-  </div>
 </div>
 
-<!-- 身分輸入 -->
-<div class="modal" id="idModal">
+<footer class="footer">
+  <div class="dock">
+    <span class="pill" id="progress">0 / 0 已作答</span>
+    <button class="btn ghost" id="btnReset">重置本關</button>
+    <button class="btn primary" id="btnSubmit">送出本關</button>
+  </div>
+</footer>
+
+<!-- 身份輸入 -->
+<div id="dlgID" class="modal">
   <div class="sheet">
     <h3>請先輸入識別資訊</h3>
-    <div class="row">
+    <div class="input">
       <label>教師姓名（必填）</label>
-      <input type="text" id="tid" placeholder="例如：王小美"/>
+      <input id="inpName" placeholder="例如：王小美"/>
     </div>
-    <div class="row">
+    <div class="input">
       <label>單位 / 部門（必填）</label>
-      <input type="text" id="unit" placeholder="例如：11B"/>
+      <input id="inpUnit" placeholder="例如：11B"/>
+      <div class="small">僅用於學習統計，不會對外公開。</div>
     </div>
-    <div class="row" style="justify-content:flex-end;margin-top:6px">
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
       <button class="btn primary" id="btnStart">開始</button>
     </div>
   </div>
 </div>
 
-<!-- 玩法 -->
-<div class="modal" id="howModal"><div class="sheet">
-  <h3>👀 怎麼玩＋精神喊話</h3>
-  <p class="small">讀情境 → 選三類之一：👩‍🏫 教師中心｜🌱 學員中心（責任分級）｜💗 過度包容（不健康）。</p>
-  <p class="small">送出後會看到解析與「學員中心轉譯」。</p>
-  <div class="baditem">
-    <div><b>精神喊話：</b></div>
-    <div class="rw">我相信我是一位<strong>神隊友</strong>老師，學妹一定能接住我傳的球！凡事發生皆是天助我也～<br/>收好我的白眼、壓住我的深呼吸，讓他相信自己還有救！<br/>不要表露、不要放棄，我們需要新鮮的夥伴一起上班。想想我的排班、想想我的 OFF Day～<br/><b>我可以，他也一定可以！</b> 🫡</div>
+<!-- 說明 -->
+<div id="dlgHow" class="modal">
+  <div class="sheet">
+    <h3>👀 開始前請看我</h3>
+    <div class="baditem">
+      <div><b>玩法</b></div>
+      <div class="rw">讀情境 → 選三類之一：<b>教師中心</b> / <b>學員中心（責任分級）</b> / <b>過度包容</b>。送出後會看到「迷思點」解析。</div>
+    </div>
+    <div class="baditem">
+      <div><b>精神喊話</b></div>
+      <div class="rw">我相信我是<strong>神隊友</strong>老師，學妹一定能接住我傳的球！收好我的白眼、壓住我的深呼吸，讓他相信自己還有救！不要表露、不要放棄，我們需要新鮮的夥伴一起上班。想想我的排班、想想我的 OFF Day～ <b>我可以，他也一定可以！</b> 🫡</div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="btnHowClose">關閉</button>
+    </div>
   </div>
-  <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn primary" id="btnHowClose">我知道了</button></div>
-</div></div>
+</div>
 
 <div class="toast" id="toast">已儲存</div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzfdyabwrsdhxau9k8IoeBEx4wTd_aCAd8hOh3WyCMJBlN9b4EbetSIkvssAZb5rVt_/exec";
+/* ---------- 設定 ---------- */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwNdUM98noKftjKkwhAXrgope93itQ-HnkY-G4Ng2u7pasq3ow0VZ_ZnKNJcIJV-LE2_A/exec";
 
-// ===== 題庫（臨床版；移除生活類別） =====
-const BANK_L1 = [
-  {id:"L1-01", scene:"交班前。", teacher:"昨天討論過交班，今天交班前我們先練一次，放輕鬆。", student:"好。", key:"learner",
-    why:"給可掌握的挑戰，先練習再上場。", trans:"我先示範重點，接著你做，我在旁把關時間與安全。"},
-  {id:"L1-02", scene:"帶教回饋。", teacher:"怕打擊他的信心，就說做得不錯吧。", student:"（…）", key:"over",
-    why:"以保護為名避免回饋，無助提升品質。", trans:"回饋聚焦行為與結果，提供下一步具體做法。"},
-  {id:"L1-03", scene:"連續照顧。", teacher:"你已經卡這段第2次，都認識病人，應該可以自己去給藥吧。", student:"…", key:"teacher",
-    why:"以主觀感覺放手，未以分級標準與情境風險判定。", trans:"對齊 3a 的標準情境，先在可預期場景半監督放手。"},
-  {id:"L1-04", scene:"抽血練習。", teacher:"剛剛看你抽血還不熟，等一下我再做一次邊說明，下一床換你抽血，我在旁邊幫你。", student:"好，謝謝老師。", key:"learner",
-    why:"依表現調整監督強度，提供可掌握挑戰。", trans:"先口述步驟再實作，我提供即時回饋。"},
-  {id:"L1-05", scene:"示範後。", teacher:"這次我先做示範，學員看就好。", student:"…", key:"teacher",
-    why:"單向示範；應安排示範重點與隨後的上手練習。", trans:"示範後讓你立即做一次，我在旁提醒關鍵。"},
-  {id:"L1-06", scene:"交班壓力。", teacher:"今天交班很趕，就不要讓學員講了。", student:"…", key:"teacher",
-    why:"時間壓力下仍可用『重點版交班』維持練習與把關。", trans:"你先講重點版，我補缺漏並控時間與風險。"},
-  {id:"L1-07", scene:"衛教品質。", teacher:"給藥OK，但衛教還需加強，先針對這部分練習。", student:"好。", key:"learner",
-    why:"針對弱點切出可練的片段，屬學員中心支持。", trans:"定義兩個衛教要點，結束後我給兩條具體建議。"},
-  {id:"L1-08", scene:"安全事件後。", teacher:"昨天兩次高風險錯誤，今天改回全程監督。", student:"了解。", key:"learner",
-    why:"依風險動態調整監督強度，安全優先。", trans:"先複盤昨日錯誤，列出防呆清單再放手。"},
-  {id:"L1-09", scene:"準備不足。", teacher:"他沒準備也沒關係，下次再說。", student:"…", key:"over",
-    why:"模糊標準、放任延宕。", trans:"界定最小安全任務與下次前必備清單。"},
-];
+/* ---------- 資料 ---------- */
+const BANK = {
+  1: [
+    {id:"L1-01", scene:"交班前。", t:"昨天討論過交班，今天交班前我們先練一次，放輕鬆。", s:"好。", truth:"learner",
+     why:"以學員能力配適，創造可達成的伸展目標。"},
+    {id:"L1-02", scene:"連續照顧。", t:"你已經卡這段第 2 次，都認識病人，應該可以自己去給藥吧。", s:"…", truth:"teacher",
+     why:"以主觀感覺放手，未依等級與情境風險判斷。"},
+    {id:"L1-03", scene:"示範與放手。", t:"這次我先做示範，你看就好。", s:"…", truth:"teacher",
+     why:"單向示範；應安排隨後上手練習與回饋。"},
+    {id:"L1-04", scene:"交班壓力。", t:"今天交班很趕，就不要讓學員講了。", s:"…", truth:"teacher",
+     why:"時間壓力下仍可用精要版交班，保留練習與把關。"},
+    {id:"L1-05", scene:"抽血練習。", t:"剛剛看你抽血還不熟，等一下我再做一次邊說明，下一床換你抽，我在旁幫你。", s:"好。", truth:"learner",
+     why:"分段委託與即時回饋，屬責任分級。"},
+    {id:"L1-06", scene:"交班訓練。", t:"你先用 ISBAR 交班一次，我們錄下來，之後一起回顧。", s:"好！", truth:"learner",
+     why:"結構化工具＋自我回顧，提升品質。"},
+    {id:"L1-07", scene:"交班前。", t:"你先講精要版，我補關鍵並控時間。", s:"OK！", truth:"learner",
+     why:"教師把關風險與節奏，學員保有練習片段。"},
+    {id:"L1-08", scene:"衛教品質。", t:"給藥 OK，但衛教需要加強；等一下我先做一次並說明，下一床換你。", s:"好。", truth:"learner",
+     why:"針對弱項拆解練習，逐步提升自我效能。"},
+    {id:"L1-09", scene:"帶教回饋。", t:"怕打擊他的信心，就說做得不錯吧。", s:"…", truth:"over",
+     why:"以保護為名迴避回饋，應聚焦行為與下一步。"},
+  ],
+  2: [
+    {id:"L2-01", scene:"學習狀態。", t:"昨天兩次高風險錯誤，今天改回全程監督。", s:"了解。", truth:"learner",
+     why:"依風險動態調整監督強度，安全優先。"},
+    {id:"L2-02", scene:"團隊關係。", t:"為了團隊和平，錯誤就先不提了。", s:"…", truth:"over",
+     why:"避免衝突≠不該回饋；需以客觀事證與改善步驟溝通。"},
+    {id:"L2-03", scene:"高壓情境。", t:"他好像很怕，我更怕…我自己做吧。", s:"…", truth:"over",
+     why:"可切出最小安全任務，在監督下嘗試。"},
+    {id:"L2-04", scene:"交班時間緊。", t:"今天交班很趕，就不要讓你講了。", s:"…", truth:"teacher",
+     why:"可採精要版交班並補關鍵，維持練習與把關。"},
+    {id:"L2-05", scene:"示範後。", t:"這次我先做示範，你看就好。", s:"好。", truth:"teacher",
+     why:"示範不等於練習；應安排跟做片段與回饋。"},
+    {id:"L2-06", scene:"DOPS。", t:"抽血技巧不熟，先用 DOPS 集中練三次。", s:"好。", truth:"learner",
+     why:"用 DOPS 針對單一技能練，支撐 EPA 任務。"},
+    {id:"L2-07", scene:"規劃練習。", t:"等我有空再帶你練。", s:"…", truth:"teacher",
+     why:"以教師時間為中心；應安排短時段微演練建立回饋循環。"},
+    {id:"L2-08", scene:"主觀放手。", t:"我覺得差不多了，可以放手讓他做。", s:"…", truth:"teacher",
+     why:"應以等級與情境標準佐證，而非感覺。"},
+    {id:"L2-09", scene:"結構化交班。", t:"交班常漏重點，用 ISBAR 練習並錄音回顧。", s:"收到！", truth:"learner",
+     why:"結構＋自我回顧能提升品質。"},
+    {id:"L2-10", scene:"可預期情境。", t:"此任務難度適中，正好挑戰你的下一階能力。", s:"想試試！", truth:"learner",
+     why:"伸展目標、強化自我效能。"},
+    {id:"L2-11", scene:"指導策略。", t:"你先做一次，我在旁即時回饋，遇到風險我接手。", s:"好！", truth:"learner",
+     why:"監督強度可調，保安全也保練習。"},
+    {id:"L2-12", scene:"保護心態。", t:"怕你受挫，就不說剛剛哪裡不好。", s:"…", truth:"over",
+     why:"回避回饋會阻斷成長，應聚焦行為與可改進步驟。"},
+  ]
+};
 
-const BANK_L2 = [
-  {id:"L2-01", scene:"交班訓練。", teacher:"你先試用 ISBAR 交班一次，我們錄下來一起回顧。", student:"好。", key:"learner",
-    why:"結構化工具 + 自我回顧，提升品質。", trans:"錄完我給兩點強化重點，下次再做一次。"},
-  {id:"L2-02", scene:"示範與放手。", teacher:"我做一次就換你。", student:"…", key:"teacher",
-    why:"需界定示範重點與放手情境標準。", trans:"我做重點示範，接著你在標準情境操作，我半監督。"},
-  {id:"L2-03", scene:"團隊關係。", teacher:"為了世界和平，錯誤就不提了。", student:"…", key:"over",
-    why:"避免衝突而不談錯誤，會讓風險持續。", trans:"回顧具體事證，聚焦改進點與下一步。"},
-  {id:"L2-04", scene:"交班時間緊。", teacher:"今天交班很趕，就不要讓學員講了。", student:"…", key:"teacher",
-    why:"時間壓力下仍可切成『重點版交班』。", trans:"你講重點，我把關時間與安全。"},
-  {id:"L2-05", scene:"示範後。", teacher:"這次我先做示範，學員看我就好。", student:"…", key:"teacher",
-    why:"示範不等於練習；應安排跟做片段與回饋。", trans:"示範後立即換你做一次，我在旁回饋兩點。"},
-  {id:"L2-06", scene:"DOPS。", teacher:"抽血技巧不熟，先用 DOPS 集中練三次。", student:"好。", key:"learner",
-    why:"用 DOPS 針對單一技能練，支撐 EPA 任務。", trans:"連續三次，每次後即時回饋。"},
-  {id:"L2-07", scene:"放手判斷。", teacher:"我覺得差不多了，讓他獨立。", student:"…", key:"teacher",
-    why:"以感覺放手，未對齊等級/情境。", trans:"依 3a/3b 標準與場景判定，先半監督放手。"},
-  {id:"L2-08", scene:"錄音回顧。", teacher:"交班常遺漏重點，錄音回顧一次。", student:"好。", key:"learner",
-    why:"自我回顧配合結構化清單可強化品質。", trans:"用清單逐項檢核，下一次實作驗證。"},
-  {id:"L2-09", scene:"信心不足。", teacher:"他已能依步驟完成，但信心不足，給一次獨立完成機會。", student:"好。", key:"learner",
-    why:"提供可掌握挑戰以強化自效感。", trans:"我遠端監督，你先試。"},
-  {id:"L2-10", scene:"壓力大。", teacher:"怕你受挫，就不說剛剛哪裡不好。", student:"…", key:"over",
-    why:"回避回饋會阻斷成長。", trans:"聚焦行為與結果，提出可調整步驟。"},
-  {id:"L2-11", scene:"時間安排。", teacher:"等我有空再帶他練。", student:"…", key:"teacher",
-    why:"以教師時間為中心，缺乏規律安排。", trans:"排短時段微演練，建立每天的練習循環。"},
-  {id:"L2-12", scene:"任務委託。", teacher:"你先做一次，我在旁即時回饋，遇到風險我接手。", student:"好！", key:"learner",
-    why:"監督強度可調，保安全也保練習。", trans:"標準情境先半監督，逐步走向獨立。"},
-];
-
+/* ---------- 狀態 ---------- */
 let LEVEL = 1;
-let sessionId = Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-let identity = {tid:"",unit:""};
+let answers = {}; // id -> chosen
+let user = {name:"", unit:"", session: "SID-"+Date.now().toString(36)+Math.random().toString(36).slice(2,8)};
 
-const $pool = document.getElementById('pool');
-const $result = document.getElementById('result');
-const $badlist = document.getElementById('badlist');
-const $okn = document.getElementById('okn');
-const $wn = document.getElementById('wn');
-const $toast = document.getElementById('toast');
+/* ---------- 工具 ---------- */
+const $ = s=>document.querySelector(s);
+const board = $('#board');
+const resultPanel = $('#resultPanel');
+const $ok = $('#okn'); const $wn = $('#wn'); const $bad = $('#badlist');
+const toast = msg => { const t=$('.toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1000); };
+const label = k => k==='teacher'?'教師中心':k==='learner'?'學員中心（責任分級）':'過度包容（不健康）';
+const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 
-document.getElementById('btnL1').onclick=()=>{LEVEL=1; render()}
-document.getElementById('btnL2').onclick=()=>{LEVEL=2; render()}
-document.getElementById('btnReset').onclick=()=>render();
-document.getElementById('btnSubmit').onclick=submitLevel();
-function submitLevel(){return ()=>{
-  const data = currentBank().map(q=>{
-    const sel = document.querySelector(`input[name="${q.id}"]:checked`);
-    const chosen = sel? sel.value : "";
-    return {id:q.id,chosen,truth:q.key, correct: (chosen===q.key), why:q.why, trans:q.trans, scene:q.scene, t:q.teacher, s:q.student};
-  });
-  const ok = data.filter(d=>d.correct).length;
-  $okn.textContent = ok;
-  $wn.textContent = data.length-ok;
-  // 渲染解析
-  $badlist.innerHTML = "";
-  data.filter(d=>!d.correct).forEach(d=>{
-    const div=document.createElement('div');
-    div.className='baditem';
-    div.innerHTML = `<div><b>題目：</b>${d.scene}</div>
-      <div class="small">👩‍🏫 老師：${d.t}</div>
-      <div class="small">👤 學員：${d.s}</div>
-      <div style="margin-top:6px"><b>你的答案：</b>${labelOf(d.chosen)}　｜　<b>正解：</b>${labelOf(d.truth)}</div>
-      <div class="rw"><b>為什麼？</b> ${d.why}<br/><b>學員中心轉譯：</b> ${d.trans}</div>`;
-    $badlist.appendChild(div);
-  });
-  $result.style.display='block';
-  // 傳 GAS summary（若要逐題可再擴充）
-  fetch(GAS_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      type:'summary',
-      tid:identity.tid, unit:identity.unit, session_id:sessionId,
-      level: LEVEL, total:data.length, correct: ok,
-      time_ms: 0, device_width: window.innerWidth, user_agent:navigator.userAgent
-    })
-  }).catch(()=>{});
-}}
-
-function labelOf(k){
-  if(k==='teacher') return '教師中心';
-  if(k==='learner') return '學員中心（責任分級）';
-  if(k==='over') return '過度包容（不健康）';
-  return '（未作答）';
-}
-
-function currentBank(){ return LEVEL===1 ? BANK_L1 : BANK_L2 }
-
-function card(q){
-  const el=document.createElement('div');
+/* ---------- UI ---------- */
+function makeCard(q){
+  const el=document.createElement('section');
   el.className='scene';
   el.innerHTML = `
-    <h3>📍 ${q.scene}</h3>
-    <div class="bubble">👩‍🏫 老師：${q.teacher}</div>
-    <div class="bubble">👤 學員：${q.student}</div>
+    <div class="head">📍 ${q.scene} <span class="small" style="color:#6b7280">(${q.id})</span></div>
+    <div class="bubble">👩‍🏫 老師：${q.t}</div>
+    <div class="bubble">👤 學員：${q.s}</div>
     <div class="choices">
-      <label class="choice" data-k="teacher">
-        <input type="radio" name="${q.id}" value="teacher" hidden/>
-        👩‍🏫 教師中心
-      </label>
-      <label class="choice" data-k="learner">
-        <input type="radio" name="${q.id}" value="learner" hidden/>
-        🌱 學員中心（責任分級）
-      </label>
-      <label class="choice" data-k="over">
-        <input type="radio" name="${q.id}" value="over" hidden/>
-        💗 過度包容（不健康）
-      </label>
+      ${['teacher','learner','over'].map(k=>`
+        <label class="choice" data-k="${k}">
+          <input type="radio" name="${q.id}" value="${k}"/>
+          ${k==='teacher'?'👩‍🏫 教師中心':k==='learner'?'🌱 學員中心（責任分級）':'💗 過度包容（不健康）'}
+        </label>`).join('')}
     </div>`;
-  el.querySelectorAll('.choice').forEach(ch=>{
-    ch.addEventListener('click',()=>{
-      el.querySelectorAll('.choice').forEach(x=>x.classList.remove('active'));
-      ch.classList.add('active');
-      ch.querySelector('input').checked = true;
+  const opts = el.querySelectorAll('.choice');
+  opts.forEach(o=>o.addEventListener('click',()=>{
+    opts.forEach(x=>x.classList.remove('active'));
+    o.classList.add('active');
+    const val = o.dataset.k;
+    answers[q.id]=val;
+    updateProgress();
+    // 逐題回傳（失敗也不影響 UI）
+    sendRow({
+      timestamp: new Date().toISOString(),
+      name:user.name, unit:user.unit, session_id:user.session,
+      level: LEVEL, item_id:q.id, truth:q.truth, chosen:val,
+      correct: (val===q.truth)?1:0, used_hint:0, time_ms:0,
+      device_width: window.innerWidth, user_agent: navigator.userAgent
     });
-  });
+  }));
   return el;
 }
 
 function render(){
-  $result.style.display='none';
-  $pool.innerHTML='';
-  shuffle(currentBank()).forEach(q=> $pool.appendChild(card(q)) );
-  toast('已切換到關卡 '+LEVEL);
-  document.scrollingElement.scrollTo({top: document.querySelector('.stage').offsetTop-10, behavior:'smooth'});
+  answers = {};
+  resultPanel.style.display='none';
+  board.innerHTML='';
+  const items = shuffle(BANK[LEVEL].slice());
+  items.forEach(q=> board.appendChild(makeCard(q)));
+  updateProgress();
+  window.scrollTo({top: document.querySelector('.wrap').offsetTop+10, behavior:'smooth'});
 }
 
-function shuffle(arr){arr=arr.slice(); for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]} return arr}
+function updateProgress(){
+  const total = BANK[LEVEL].length;
+  const done = Object.keys(answers).length;
+  $('#progress').textContent = `${done} / ${total} 已作答`;
+}
 
-function toast(msg){$toast.textContent=msg;$toast.style.display='block';setTimeout(()=>{$toast.style.display='none'},800)}
+function submit(){
+  const items = BANK[LEVEL];
+  const total = items.length;
+  if(Object.keys(answers).length<total){ toast('還有題目未作答喔'); return; }
+  let ok=0; const wrong=[];
+  items.forEach(q=>{
+    const c = answers[q.id];
+    const corr = (c===q.truth);
+    if(corr) ok++; else wrong.push({q, chosen:c});
+  });
+  $ok.textContent = ok; $wn.textContent = total-ok;
+  $bad.innerHTML='';
+  if(wrong.length===0){
+    const div=document.createElement('div'); div.className='bubble'; div.textContent='🎉 太強了！本關全對。';
+    $bad.appendChild(div);
+  }else{
+    wrong.forEach(w=>{
+      const div=document.createElement('div'); div.className='baditem';
+      div.innerHTML=`
+        <div><b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
+        <div class="small">👩‍🏫 ${w.q.t}</div>
+        <div class="small">👤 ${w.q.s}</div>
+        <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.q.truth)}</div>
+        <div class="rw"><b>為什麼？</b> ${w.q.why}</div>`;
+      $bad.appendChild(div);
+    });
+  }
+  resultPanel.style.display='block';
+  // Summary（不阻塞 UI）
+  sendRow({
+    type:'summary',
+    timestamp:new Date().toISOString(),
+    name:user.name, unit:user.unit, session_id:user.session,
+    level:LEVEL, total:total, correct:ok,
+    device_width:window.innerWidth, user_agent:navigator.userAgent
+  });
+  window.scrollTo({top: resultPanel.offsetTop-60, behavior:'smooth'});
+}
 
-// 身分輸入與玩法
-const idModal=document.getElementById('idModal');
-const howModal=document.getElementById('howModal');
-document.getElementById('btnStart').onclick=()=>{
-  const t=document.getElementById('tid').value.trim();
-  const u=document.getElementById('unit').value.trim();
-  if(!t||!u) return alert('請先完成姓名與單位');
-  identity={tid:t,unit:u};
-  idModal.style.display='none';
-  render();
-  setTimeout(()=> howModal.style.display='flex', 150);
-};
-document.getElementById('btnHow').onclick=()=> howModal.style.display='flex';
-document.getElementById('btnHowClose').onclick=()=> howModal.style.display='none';
+/* ---------- 後台 ---------- */
+function sendRow(obj){
+  try{
+    const blob = new Blob([JSON.stringify(obj)], {type:'application/json'});
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(GAS_URL, blob);
+    }else{
+      fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)});
+    }
+  }catch(e){ /* 靜默 */ }
+}
 
-// 初始彈出身份窗
+/* ---------- 綁定 ---------- */
 window.addEventListener('load', ()=>{
-  idModal.style.display='flex';
+  // 身份
+  const dlg = $('#dlgID'); dlg.style.display='flex';
+  $('#btnStart').onclick = ()=>{
+    const name = $('#inpName').value.trim();
+    const unit = $('#inpUnit').value.trim();
+    if(!name || !unit){ toast('請完整填寫姓名與單位'); return; }
+    user.name=name; user.unit=unit;
+    dlg.style.display='none';
+    render();
+    // 打開說明
+    $('#dlgHow').style.display='flex';
+  };
+  // 說明
+  $('#btnHow').onclick = ()=> $('#dlgHow').style.display='flex';
+  $('#btnHowClose').onclick = ()=> $('#dlgHow').style.display='none';
+  // 關卡
+  $('#btnL1').onclick = ()=>{ LEVEL=1; render(); };
+  $('#btnL2').onclick = ()=>{ LEVEL=2; render(); };
+  $('#btnReset').onclick = ()=> render();
+  $('#btnSubmit').onclick = ()=> submit();
 });
 </script>
 </body>
