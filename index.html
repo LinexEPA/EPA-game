@@ -1,1 +1,464 @@
-<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8"><title>EPA Game v7</title></head><body>檔案建立測試。如果你看到這段，請回覆我「重建完整檔案」。</body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>為什麼要有 EPA？｜快思慢想（v7）</title>
+<style>
+:root{
+  --bg:#FFF6FA;
+  --panel:#ffffff;
+  --ink:#222;
+  --muted:#667085;
+  --brand:#7c83ff;
+  --brand2:#ff7aa2;
+  --good:#55C595;
+  --warn:#FFB84D;
+  --bad:#FF7A88;
+  --pink:#FFE8ED;
+  --green:#E8FFF1;
+  --yellow:#FFF2C6;
+  --blue:#E9EDFF;
+  --shadow:0 10px 24px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:ui-sans-serif, "Noto Sans TC","PingFang TC","Microsoft JhengHei", system-ui, -apple-system, Arial;
+  background:
+   radial-gradient(900px 500px at 80% -40%, #FFE3F1 0, rgba(255,227,241,0) 60%),
+   radial-gradient(900px 600px at -10% 120%, #E9EDFF 0, rgba(233,237,255,0) 60%),
+   var(--bg);
+  color:var(--ink);
+}
+.wrap{max-width:1100px; margin:0 auto; padding:18px 14px 100px}
+header{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:space-between; margin-bottom:10px;
+}
+.title{display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--panel); border-radius:14px; box-shadow:var(--shadow)}
+.title h1{margin:0; font-size:18px}
+.badge{font-size:12px; color:#4B5563; background:linear-gradient(180deg,#fff,#F6F9FF); border:1px solid #E8EBFF; padding:6px 10px; border-radius:999px}
+.toolbar{display:flex; gap:8px; flex-wrap:wrap}
+button{border:0; border-radius:12px; padding:10px 14px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); transition:transform .05s ease}
+button:active{transform:translateY(1px)}
+.ghost{background:#fff}
+.primary{background:linear-gradient(180deg,#7A86FF,#6C79FF); color:#fff}
+.pink{background:linear-gradient(180deg,#ff9ec0,#ff7aa2); color:#fff}
+.success{background:linear-gradient(180deg,#75D7A8,#55C595); color:#fff}
+.danger{background:linear-gradient(180deg,#FFA0AD,#FF7A88); color:#fff}
+.info{background:linear-gradient(180deg,#ffd1e2,#ffc6da);}
+
+.banner{
+  margin:8px 0 14px; padding:12px 14px; border-radius:14px;
+  background:linear-gradient(180deg,#fff,#FFF0F6); display:flex; align-items:center; gap:8px;
+  box-shadow:var(--shadow); color:#333;
+}
+.banner a{color:#6C79FF; text-decoration:none; font-weight:700}
+
+.grid{display:grid; grid-template-columns:1fr; gap:12px}
+@media(min-width:880px){ .grid{grid-template-columns:1.1fr 1fr 1fr 1fr} }
+
+.pool, .bucket{min-height:160px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:12px}
+.pool{background:linear-gradient(180deg,#ffffff,#FDFBFF)}
+.bucket{position:relative}
+.bucket[data-category="teacher"]{background:linear-gradient(180deg,#ffffff, var(--pink))}
+.bucket[data-category="learner"]{background:linear-gradient(180deg,#ffffff, var(--green))}
+.bucket[data-category="over"]{background:linear-gradient(180deg,#ffffff, var(--yellow))}
+
+.bucket h3{margin:0 0 8px; font-size:15px; display:flex; align-items:center; gap:8px}
+.bucket h3 span{font-size:20px}
+.cards{display:flex; flex-wrap:wrap; gap:8px}
+.card{
+  user-select:none; -webkit-user-drag:none; touch-action:none;
+  background:var(--panel); border-radius:14px; padding:12px 12px; min-width:180px; max-width:260px; flex:1 0 180px;
+  box-shadow:var(--shadow); cursor:grab; border:1px solid rgba(0,0,0,.04);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card.small{min-width:140px}
+.card.dragging{opacity:.9; transform:rotate(2deg) scale(1.03)}
+.card.follow{position:fixed; z-index:9999; pointer-events:none; transform:translate(-50%,-50%) scale(1.03);} 
+.drop-highlight{outline:2px dashed rgba(0,0,0,.15); outline-offset:-6px}
+.bucket.hover{outline:3px solid rgba(108,121,255,.35); outline-offset:-6px}
+
+.footer{margin-top:14px; display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.pill{background:#fff; border-radius:999px; padding:6px 10px; box-shadow:var(--shadow); font-size:12px}
+#progress{font-weight:700}
+
+.result, .modal, .sheet{display:none}
+.result{margin-top:16px; background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:14px}
+.result h3{margin:0 0 8px}
+.badlist{display:grid; grid-template-columns: 1fr; gap:8px}
+@media(min-width:760px){.badlist{grid-template-columns: 1fr 1fr}}
+.baditem{background:linear-gradient(180deg,#fff,#FFF9FB); border:1px solid #FFE1E6; border-radius:14px; padding:10px}
+.baditem .rewrite{margin-top:6px; background:#F0FFF7; border:1px dashed #BEE8D2; padding:8px; border-radius:10px; font-size:14px}
+
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.2); align-items:flex-end; justify-content:center; z-index:9998}
+.sheet{background:#fff; border-radius:18px 18px 0 0; padding:16px; box-shadow:0 -10px 30px rgba(0,0,0,.15); width:100%}
+.sheet h4{margin:4px 6px 10px}
+.choices{display:flex; gap:10px}
+.choice{flex:1; padding:12px; border-radius:14px; border:1px solid rgba(0,0,0,.08); display:flex; gap:8px; align-items:center; justify-content:center}
+.choice[data-target="teacher"]{background:var(--pink)}
+.choice[data-target="learner"]{background:var(--green)}
+.choice[data-target="over"]{background:var(--yellow)}
+
+.toast{position:fixed; left:50%; transform:translateX(-50%); bottom:18px; background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:14px; display:none; z-index:9999}
+.confetti{position:fixed; inset:0; pointer-events:none; z-index:9997}
+
+#idGate{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.85); z-index:10000}
+#idCard{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px; width:min(560px,92vw)}
+#idCard h2{margin:0 0 12px}
+.input{display:flex; flex-direction:column; gap:6px; margin:10px 0}
+.input input{padding:10px 12px; border-radius:12px; border:1px solid #E5E7EB; font-size:16px}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+
+#how{display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); align-items:center; justify-content:center; z-index:9999}
+.howcard{background:#fff; padding:18px; border-radius:16px; width:min(700px,95vw); box-shadow:var(--shadow)}
+.howcard h3{margin:0 0 8px}
+.howcard ul{margin:8px 0 0 20px}
+</style>
+</head>
+<body>
+<div id="idGate">
+  <div id="idCard">
+    <h2>請先輸入識別資訊</h2>
+    <div class="row">
+      <div class="input" style="flex:1 1 260px">
+        <label>教師姓名（必填）</label>
+        <input id="tid" placeholder="例如：王小美"/>
+      </div>
+      <div class="input" style="flex:1 1 220px">
+        <label>單位 / 部門（必填）</label>
+        <input id="unit" placeholder="例如：11B"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="pill" style="background:#F3F4FF">歡迎加入，填寫後點「開始」：今天一起用「情境分類」感受 EPA 的思路！</div>
+      <button id="btnStart" class="primary">開始</button>
+    </div>
+  </div>
+</div>
+
+<div id="how">
+  <div class="howcard">
+    <h3>👀 遊戲怎麼玩？（30 秒）</h3>
+    <ul>
+      <li>把每張對話卡片拖到正確的類別：<b>教師中心</b>、<b>學員中心（責任分級）</b>、<b>過度包容（不健康）</b>。</li>
+      <li>手機可「點卡片」→ 選類別；或長按拖曳。</li>
+      <li>送出後會顯示解析與「迷思地圖」，幫你看懂為什麼。</li>
+      <li>每關達標會灑花 🎉，並把結果記錄到你的儀表板。</li>
+    </ul>
+    <div class="row" style="margin-top:10px">
+      <div class="pill">精神喊話：<br/>我相信我是一位神隊友老師，學妹一定能接住我傳的球！凡事發生皆是天助我也～收好我的白眼、壓住我的深呼吸，讓他相信自己還有救！不要放棄，我們需要新鮮夥伴一起上班。想想我的排班、想想我的 OFF Day～我可以，他也一定可以！</div>
+      <button class="primary" onclick="closeHow()">我準備好了 💪</button>
+    </div>
+  </div>
+</div>
+
+<canvas class="confetti" id="confetti"></canvas>
+<div class="toast" id="toast">已放置</div>
+
+<div class="wrap">
+  <header>
+    <div class="title">
+      <span style="font-size:20px">📚</span>
+      <h1>為什麼要有 EPA？｜快思慢想</h1>
+      <span class="badge">可愛馬卡龍 · 兩階段遊戲 + 統計 · 觸控拖曳 / 點選</span>
+    </div>
+    <div class="toolbar">
+      <button class="ghost" id="btnL1">關卡1</button>
+      <button class="ghost" id="btnL2">關卡2</button>
+      <button class="pink" id="btnHow">開始遊戲前請看我</button>
+      <button class="ghost" id="btnReset">重置本關</button>
+      <button class="primary" id="btnCheck">送出本關</button>
+      <button class="ghost" id="btnMap">🗺️🐶 迷思地圖</button>
+    </div>
+  </header>
+
+  <div class="banner" id="guideBanner">
+    <b>👀 以下對話情境，你覺得是以誰為中心呢？</b>
+    <span class="pill">不確定？點右上方「開始遊戲前請看我」</span>
+  </div>
+
+  <div class="grid">
+    <section class="pool" id="pool">
+      <h3 style="margin:0 0 8px; display:flex; align-items:center; gap:8px">🃏 待分類卡片</h3>
+      <div class="cards" id="poolCards"></div>
+    </section>
+
+    <section class="bucket" data-category="teacher">
+      <h3><span>👩‍🏫</span> 教師中心</h3>
+      <div class="cards"></div>
+    </section>
+
+    <section class="bucket" data-category="learner">
+      <h3><span>🌱</span> 學員中心（責任分級）</h3>
+      <div class="cards"></div>
+    </section>
+
+    <section class="bucket" data-category="over">
+      <h3><span>💗</span> 過度包容（不健康）</h3>
+      <div class="cards"></div>
+    </section>
+  </div>
+
+  <div class="footer">
+    <span class="pill">手機：長按拖曳，或點卡片選分類</span>
+    <span class="pill" id="hintRemain">提示：本關可用 × <b>2</b></span>
+    <span class="pill" id="progress">0 / 0 已分類</span>
+  </div>
+
+  <section class="result" id="result">
+    <h3>結果與解析</h3>
+    <p style="margin:0 0 10px">本關分數：<b id="score">0</b> 分。下方是需要修正的題目與說明。</p>
+    <div class="badlist" id="badlist"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="ghost" id="btnAgain">再玩一次</button>
+      <button class="primary" id="btnToL2">前往關卡2</button>
+    </div>
+  </section>
+</div>
+
+<!-- Mobile choice modal -->
+<div class="modal" id="modal">
+  <div class="sheet">
+    <h4>把這句話放到哪一類？</h4>
+    <div class="choices">
+      <div class="choice" data-target="teacher">👩‍🏫 教師中心</div>
+      <div class="choice" data-target="learner">🌱 學員中心</div>
+      <div class="choice" data-target="over">💗 過度包容</div>
+    </div>
+    <div style="margin-top:10px; font-size:13px; color:#6b7280">沒有把握？本關可使用「提示」會給 50/50 線索與一段說明。</div>
+  </div>
+</div>
+
+<script>
+/*** ====== 設定 ====== ***/
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzfdyabwrsdhxau9k8IoeBEx4wTd_aCAd8hOh3WyCMJBlN9b4EbetSIkvssAZb5rVt_/exec";
+
+// 題庫（兩關）
+const LEVELS = {
+ L1: {
+  hint: 2,
+  pass: 7,
+  items: [
+    {id:"L1-01", text:"你今天很累不要做家事了，我全包。", type:"over", reason:"模糊標準、放任延宕，無助於學習與安全。", rewrite:"先界定最小安全任務，給明確預期與下次前要達到的準備。"},
+    {id:"L1-02", text:"你先講今晚的約會流程，我再補充關鍵。", type:"learner", reason:"強調可觀察行為與具體回饋，支援成長循環。"},
+    {id:"L1-03", text:"這次我先示範，學員看就好。", type:"teacher", reason:"以教師效率為中心；未提供可委託片段與回饋循環。", rewrite:"切出低風險片段讓學員做，我在旁邊即時回饋。"},
+    {id:"L1-04", text:"怕你受挫，就不說剛剛哪裡做得不好。", type:"over", reason:"以保護為名迴避回饋，削弱學習成效。", rewrite:"回饋聚焦在行為與結果，並給下一步具體作法。"},
+    {id:"L1-05", text:"今天交班很趕，就不要讓學員講了。", type:"teacher", reason:"用時間壓力取代學習機會；未設計低風險的可委託片段。", rewrite:"讓學員先做精要版，我補關鍵並控制風險。"},
+    {id:"L1-06", text:"你只要負責可愛就好，其他我來。", type:"over", reason:"剝奪練習機會且無成長責任。", rewrite:"切出可委託片段，讓他在我監督下負責一小段。"},
+    {id:"L1-07", text:"他已能依步驟完成，但信心不足，給一次獨立完成的機會。", type:"learner", reason:"依表現調整監督強度，提供可掌握挑戰。"},
+    {id:"L1-08", text:"他抽血技巧還不熟，先用 DOPS 集中練三次。", type:"learner", reason:"以 DOPS 強化單一技能，用於支撐 EPA 任務表現。"},
+    {id:"L1-09", text:"我覺得差不多了，可以放手讓他做。", type:"teacher", reason:"以主觀感覺放手，未以分級標準與情境風險判定。", rewrite:"改為：符合 3a 標準情境，再在半監督下放手。"},
+  ]
+ },
+ L2: {
+  hint: 2,
+  pass: 10,
+  items: [
+    {id:"L2-01", text:"剛看你抽血還不熟，等一下我再做一次邊說明，下一床換你抽，我會在旁邊幫你。", type:"learner", reason:"分段委託與即時回饋。"},
+    {id:"L2-02", text:"昨天兩次高風險錯誤，今天改回全程監督。", type:"learner", reason:"依風險動態調整監督強度，確保安全為先。"},
+    {id:"L2-03", text:"為了團隊和平，錯誤就先不提了。", type:"over", reason:"錯誤不被釐清，會讓風險持續。", rewrite:"採行三明治回饋 + 具體事實。"},
+    {id:"L2-04", text:"交班時間緊，今天就不要讓學員講了。", type:"teacher", reason:"以時間為由剝奪學習機會。", rewrite:"讓學員先做重點版，我補充關鍵。"},
+    {id:"L2-05", text:"這次我先做示範，學員看就好。", type:"teacher", reason:"單向示範；應安排擦身練習與逐步上手練習。"},
+    {id:"L2-06", text:"他都新人，先不要讓他做任何事。", type:"over", reason:"無練習與成長責任。", rewrite:"切出可委託片段，在監督下嘗試。"},
+    {id:"L2-07", text:"已在常規病人表現穩定，先讓他在標準情境半監督獨立。", type:"learner", reason:"對應等級情境放手。"},
+    {id:"L2-08", text:"交班內容常遺漏重點，讓他用 ISBAR 結構練習並錄音回顧。", type:"learner", reason:"結構化工具 + 自我回顧。"},
+    {id:"L2-09", text:"今天交班很趕，就我來講。", type:"teacher", reason:"同 L2-04。"},
+    {id:"L2-10", text:"怕打擊信心，就說做得不錯吧。", type:"over", reason:"以保護為名迴避回饋。", rewrite:"客觀描述 + 下一步。"},
+    {id:"L2-11", text:"我來處理就好，不用麻煩他。", type:"over", reason:"剝奪練習機會。"},
+    {id:"L2-12", text:"我會先觀察一次，結束給 2 條具體建議。", type:"learner", reason:"具體可行回饋。"},
+  ]
+ }
+};
+
+// 狀態
+let current = 'L1';
+let hintLeft = LEVELS[current].hint;
+let activeCard = null;
+let pointerDragging=false; let dragOffsetX=0, dragOffsetY=0; let originParent=null; let currentHoverBucket=null;
+let sessionId = Date.now()+"-"+Math.random().toString(36).slice(2,8);
+let TID=null, UNIT=null;
+
+// DOM
+const $pool = document.getElementById('poolCards');
+const $buckets = [...document.querySelectorAll('.bucket')];
+const $progress = document.getElementById('progress');
+const $result = document.getElementById('result');
+const $badlist = document.getElementById('badlist');
+const $score = document.getElementById('score');
+const $toast = document.getElementById('toast');
+const $modal = document.getElementById('modal');
+const $hintRemain = document.getElementById('hintRemain');
+
+// 準備
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]] } return arr; }
+
+function makeCard(item){
+  const el=document.createElement('div');
+  el.className='card';
+  el.textContent=item.text;
+  el.dataset.key=item.id;
+  el.draggable=true;
+  // Mouse drag
+  el.addEventListener('dragstart', e=>{el.classList.add('dragging'); e.dataTransfer.setData('text/plain', item.id);});
+  el.addEventListener('dragend', ()=>el.classList.remove('dragging'));
+  // Tap-to-place
+  el.addEventListener('click', ()=>{ if(pointerDragging) return; activeCard=el; $modal.style.display='flex'});
+  // Pointer touch-drag
+  el.addEventListener('pointerdown', (e)=>{
+    if(e.pointerType!=='touch') return;
+    e.preventDefault();
+    activeCard=el; pointerDragging=true; originParent=el.parentElement;
+    const rect=el.getBoundingClientRect();
+    dragOffsetX=e.clientX - rect.left - rect.width/2;
+    dragOffsetY=e.clientY - rect.top - rect.height/2;
+    el.classList.add('follow');
+    el.style.width=rect.width+'px';
+    moveFollow(el, e.clientX - dragOffsetX, e.clientY - dragOffsetY);
+    window.addEventListener('pointermove', onPointerMove, {passive:false});
+    window.addEventListener('pointerup', onPointerUp, {once:true});
+  });
+  return el;
+}
+function renderPool(){
+  const bank=[...LEVELS[current].items];
+  shuffle(bank);
+  $pool.innerHTML='';
+  bank.forEach(it=> $pool.appendChild(makeCard(it)) );
+  // 清空桶
+  $buckets.forEach(b=> b.querySelector('.cards').innerHTML='');
+  hintLeft = LEVELS[current].hint; $hintRemain.innerHTML=`提示：本關可用 × <b>${hintLeft}</b>`;
+  updateProgress();
+  $result.style.display='none';
+}
+function updateProgress(){
+  const total=LEVELS[current].items.length;
+  const placed= total - $pool.querySelectorAll('.card').length;
+  $progress.textContent=`${placed} / ${total} 已分類`;
+}
+
+$buckets.forEach(b=>{
+  const box=b.querySelector('.cards');
+  b.addEventListener('dragover', e=>{e.preventDefault(); box.classList.add('drop-highlight')});
+  b.addEventListener('dragleave', ()=> box.classList.remove('drop-highlight'));
+  b.addEventListener('drop', e=>{
+    e.preventDefault();
+    const key=e.dataTransfer.getData('text/plain');
+    const card=[...document.querySelectorAll('.card')].find(c=>c.dataset.key===key);
+    if(card){ box.appendChild(card); showToast('已放置'); }
+    box.classList.remove('drop-highlight');
+    updateProgress();
+  });
+});
+
+$modal.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('choice')){
+    const target=e.target.dataset.target;
+    const bucket=document.querySelector(`.bucket[data-category="${target}"] .cards`);
+    if(activeCard && bucket){ bucket.appendChild(activeCard); showToast('已放置'); }
+    $modal.style.display='none'; activeCard=null; updateProgress();
+  } else if(e.target.id==='modal'){ $modal.style.display='none'; activeCard=null; }
+});
+
+function showToast(msg){$toast.textContent=msg; $toast.style.display='block'; setTimeout(()=>{$toast.style.display='none'},900)}
+
+function getBucketAt(x,y){
+  const els = document.elementsFromPoint(x,y);
+  return els.find(e=> e.classList && e.classList.contains('bucket')) || null;
+}
+function clearHover(){ if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket=null; } }
+function moveFollow(el, x, y){ el.style.left=x+'px'; el.style.top=y+'px'; el.style.transform='translate(-50%, -50%) scale(1.03)'; }
+function onPointerMove(e){ if(!pointerDragging||!activeCard) return; e.preventDefault();
+  moveFollow(activeCard, e.clientX - dragOffsetX, e.clientY - dragOffsetY);
+  const b = getBucketAt(e.clientX, e.clientY); if(b!==currentHoverBucket){ clearHover(); if(b){ b.classList.add('hover'); currentHoverBucket=b; } }
+}
+function onPointerUp(e){
+  window.removeEventListener('pointermove', onPointerMove);
+  if(!activeCard) return;
+  if(currentHoverBucket){ currentHoverBucket.classList.remove('hover'); currentHoverBucket.querySelector('.cards').appendChild(activeCard); showToast('已放置'); }
+  else { originParent && originParent.appendChild(activeCard); }
+  activeCard.classList.remove('follow'); activeCard.style.left=''; activeCard.style.top=''; activeCard.style.width=''; activeCard.style.transform='';
+  activeCard=null; pointerDragging=false; clearHover(); updateProgress();
+}
+
+// 檢查
+function checkAnswers(){
+  let correct=0; let wrong=[]; const total=LEVELS[current].items.length;
+  const map = Object.fromEntries(LEVELS[current].items.map(it=>[it.id,it]));
+  document.querySelectorAll('.card').forEach(card=>{
+    const key=card.dataset.key; const answer=map[key].type;
+    const parentBucket = card.closest('.bucket');
+    const user = parentBucket ? parentBucket.dataset.category : 'pool';
+    if(user===answer){ correct++; sparkle(card) } 
+    else { if(user!=='pool') wrong.push({item:map[key], user}) }
+  });
+  const score = Math.round( (correct/total) * 100 );
+  $score.textContent=score;
+  $badlist.innerHTML='';
+  wrong.forEach(w=>{
+    const div=document.createElement('div'); div.className='baditem';
+    const shouldLabel = w.item.type==='teacher'?'教師中心': w.item.type==='learner'?'學員中心（責任分級）':'過度包容（不健康）';
+    const userLabel = w.user==='teacher'?'教師中心': w.user==='learner'?'學員中心（責任分級）':'過度包容（不健康）';
+    div.innerHTML=`<div><b>你的答案：</b>${userLabel}　／　<b>正解：</b>${shouldLabel}</div><div style="margin-top:6px">${w.item.text}</div>`;
+    const rw=document.createElement('div'); rw.className='rewrite';
+    rw.innerHTML= (w.item.rewrite? `<b>學員中心轉譯：</b>${w.item.rewrite}<br>` : '') + `<span style="color:#6b7280"><b>為什麼？</b> ${w.item.reason||'—'}</span>`;
+    div.appendChild(rw);
+    $badlist.appendChild(div);
+  })
+  $result.style.display='block';
+  // 通關
+  if( (current==='L1' && correct>=LEVELS.L1.pass) || (current==='L2' && correct>=LEVELS.L2.pass) ){ celebrate(); }
+
+  // 紀錄：summary + 每題
+  logSummary(score, correct, total);
+}
+async function logSummary(score, correct, total){
+  try{
+    const payload={
+      tid:TID, unit:UNIT, level: current==='L1'?1:2,
+      result:`${correct}/${total}`, correct_rate:(correct/total).toFixed(2),
+      time_ms: 0,
+      device_width: window.innerWidth||0,
+      user_agent: navigator.userAgent,
+      session_id: sessionId,
+      type:'summary'
+    };
+    await fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+  }catch(e){ console.warn(e) }
+}
+
+// 彩花
+const canvas=document.getElementById('confetti'); const ctx=canvas.getContext('2d'); function resize(){canvas.width=innerWidth; canvas.height=innerHeight} window.addEventListener('resize', resize); resize();
+function celebrate(){
+  const pieces=[...Array(140)].map(()=>({x:Math.random()*canvas.width, y:-20, r:6+Math.random()*8, vy:2+Math.random()*3, vx:(Math.random()-.5)*2, a:Math.random()*360, col: ['#FFB3C1','#BDE5D2','#FDE49C','#C9C8FF'][Math.floor(Math.random()*4)]}));
+  let t=0; (function tick(){ctx.clearRect(0,0,canvas.width,canvas.height); pieces.forEach(p=>{p.y+=p.vy; p.x+=p.vx; p.a+=5; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a*Math.PI/180); ctx.fillStyle=p.col; ctx.fillRect(-p.r/2,-p.r/2,p.r,p.r); ctx.restore()}); t++; if(t<180) requestAnimationFrame(tick); else ctx.clearRect(0,0,canvas.width,canvas.height)})();
+}
+function sparkle(el){ /* 省略：僅分數計算用 */ }
+
+// UI 綁定
+document.getElementById('btnCheck').addEventListener('click', checkAnswers);
+document.getElementById('btnReset').addEventListener('click', renderPool);
+document.getElementById('btnAgain').addEventListener('click', renderPool);
+document.getElementById('btnToL2').addEventListener('click', ()=>{ current='L2'; renderPool(); });
+document.getElementById('btnL1').addEventListener('click', ()=>{ current='L1'; renderPool(); });
+document.getElementById('btnL2').addEventListener('click', ()=>{ current='L2'; renderPool(); });
+document.getElementById('btnMap').addEventListener('click', ()=>{ document.getElementById('how').style.display='flex'; });
+document.getElementById('btnHow').addEventListener('click', ()=>{ document.getElementById('how').style.display='flex'; });
+function closeHow(){ document.getElementById('how').style.display='none'; }
+window.closeHow = closeHow;
+
+// 身份 gate
+document.getElementById('btnStart').addEventListener('click', ()=>{
+  const t=document.getElementById('tid').value.trim();
+  const u=document.getElementById('unit').value.trim();
+  if(!t || !u){ alert('請填寫姓名與單位'); return }
+  TID=t; UNIT=u;
+  document.getElementById('idGate').style.display='none';
+  renderPool();
+});
+// 初次載入：直接顯示 gate；畫面不會有頂部空白需要下滑
+renderPool(); // 先算出進度與版位（會被 gate 蓋住）
+</script>
+</body>
+</html>
