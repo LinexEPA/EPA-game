@@ -189,7 +189,7 @@ const board = $('#board');
 const resultPanel = $('#resultPanel');
 const $ok = $('#okn'); const $wn = $('#wn'); const $bad = $('#badlist');
 const toast = msg => { const t=$('.toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1000); };
-const label = k => k==='teacher'?'教師中心':k==='learner'?'學員中心（責任分級）':'過度包容（不健康）';
+const label = k => k==='teacher'?'教師中心':k==='learner'?'學員中心':'過度包容';
 const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 
 /* ---------- UI ---------- */
