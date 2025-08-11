@@ -67,7 +67,7 @@ h1{margin:0;font-size:18px}
 </header>
 
 <div class="wrap">
-  <div class="notice">以下對話情境，你覺得是以誰為中心呢？（👩‍🏫 教師中心 / 🌱 學員中心（責任分級） / 💗 過度包容）</div>
+  <div class="notice">以下對話情境，你覺得是以誰為中心呢？（👩‍🏫 教師中心 / 🌱 學員中心 / 💗 過度包容）</div>
   <section id="board" class="card panel"></section>
 
   <section id="resultPanel" class="card panel result">
@@ -110,7 +110,7 @@ h1{margin:0;font-size:18px}
     <h3>👀 開始前請看我</h3>
     <div class="baditem">
       <div><b>玩法</b></div>
-      <div class="rw">讀情境 → 選三類之一：<b>教師中心</b> / <b>學員中心（責任分級）</b> / <b>過度包容</b>。送出後會看到「迷思點」解析。</div>
+      <div class="rw">讀情境 → 選三類之一：<b>教師中心</b> / <b>學員中心</b> / <b>過度包容</b>。送出後會看到「迷思點」解析。</div>
     </div>
     <div class="baditem">
       <div><b>精神喊話</b></div>
@@ -204,7 +204,7 @@ function makeCard(q){
       ${['teacher','learner','over'].map(k=>`
         <label class="choice" data-k="${k}">
           <input type="radio" name="${q.id}" value="${k}"/>
-          ${k==='teacher'?'👩‍🏫 教師中心':k==='learner'?'🌱 學員中心（責任分級）':'💗 過度包容（不健康）'}
+          ${k==='teacher'?'👩‍🏫 教師中心':k==='learner'?'🌱 學員中心':'💗 過度包容'}
         </label>`).join('')}
     </div>`;
   const opts = el.querySelectorAll('.choice');
