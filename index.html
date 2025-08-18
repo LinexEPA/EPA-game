@@ -52,6 +52,7 @@ h1{margin:0;font-size:18px}
 .baditem{background:linear-gradient(180deg,#fff,#FFF9FB);border:1px solid #FFE1E6;border-radius:12px;padding:10px}
 .baditem .rw{background:#F0FFF7;border:1px dashed #BEE8D2;border-radius:10px;padding:8px;margin-top:6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;display:none;z-index:60}
+.resultBtns{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
 </style>
 </head>
 <body>
@@ -74,6 +75,8 @@ h1{margin:0;font-size:18px}
     <h3>結果</h3>
     <p>本關答對 <b id="okn">0</b> 題、答錯 <b id="wn">0</b> 題。</p>
     <div id="badlist" class="badlist"></div>
+    <!-- 這裡是結果區塊下方的操作鈕（會依目前關卡顯示「前往關卡 2」或「看兩個關卡錯誤」） -->
+    <div id="resultBtns" class="resultBtns"></div>
   </section>
 </div>
 
@@ -82,6 +85,8 @@ h1{margin:0;font-size:18px}
     <span class="pill" id="progress">0 / 0 已作答</span>
     <button class="btn ghost" id="btnReset">重置本關</button>
     <button class="btn primary" id="btnSubmit">送出本關</button>
+    <!-- 這裡是底部 dock 右下角要動態加入的按鈕 -->
+    <div id="dockExtra" style="display:flex;gap:8px"></div>
   </div>
 </footer>
 
@@ -122,12 +127,27 @@ h1{margin:0;font-size:18px}
   </div>
 </div>
 
+<!-- 兩關錯誤彙整 -->
+<div id="dlgAll" class="modal" style="display:none">
+  <div class="sheet">
+    <h3>兩個關卡錯誤｜快速複習</h3>
+    <div id="allList" class="badlist"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="btnAllClose">關閉</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast">已儲存</div>
 
-/* ---------- 設定（保留你的 GAS_URL） ---------- */
+<!-- 輕量版 confetti（不依賴外部 CDN） -->
+<canvas id="confettiCanvas" style="position:fixed;inset:0;pointer-events:none;z-index:50"></canvas>
+
+<script>
+/* ---------- 設定 ---------- */
 const GAS_URL = "https://script.google.com/macros/s/AKfycbyISqiBJ5HnXSU_Ah5dJu93_Igz_MvhdJn67kZMvsQJOduORRXucp0haaCzN3foIVgRKg/exec";
 
-/* ---------- 題庫（原封不動） ---------- */
+/* ---------- 題庫 ---------- */
 const BANK = {
   1: [
     {id:"L1-01", scene:"交班前。", t:"昨天討論過交班，今天交班前我們先練一次，放輕鬆。", s:"好。", truth:"learner",
@@ -177,10 +197,11 @@ const BANK = {
   ]
 };
 
-/* ---------- 狀態：保留每關的作答 ---------- */
+/* ---------- 狀態 ---------- */
 let LEVEL = 1;
-// 分關累積的答案：answersAll[1/2][題號] = 'teacher|learner|over'
-let answersAll = {1:{}, 2:{}};
+let answers = {};                 // id -> chosen
+let wrongL1 = [];                 // 本次關卡 1 的錯題
+let wrongL2 = [];                 // 本次關卡 2 的錯題
 let user = {name:"", unit:"", session: "SID-"+Date.now().toString(36)+Math.random().toString(36).slice(2,8)};
 
 /* ---------- 工具 ---------- */
@@ -192,7 +213,41 @@ const toast = msg => { const t=$('.toast'); t.textContent=msg; t.style.display='
 const label = k => k==='teacher'?'教師中心':k==='learner'?'學員中心':'過度包容';
 const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
 
-/* ---------- UI：建立題卡 ---------- */
+/* ---------- 輕量 confetti ---------- */
+const confettiCanvas = document.getElementById('confettiCanvas');
+const ctx = confettiCanvas.getContext('2d');
+let confettiParts = [];
+function resizeCanvas(){confettiCanvas.width=window.innerWidth;confettiCanvas.height=window.innerHeight}
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
+function launchConfetti(){
+  const colors = ['#FF7AA2','#7ACBFF','#FFE066','#9AFFA0','#C6A1FF'];
+  for(let i=0;i<180;i++){
+    confettiParts.push({
+      x: Math.random()*confettiCanvas.width,
+      y: -20-Math.random()*confettiCanvas.height*0.3,
+      r: 4+Math.random()*4,
+      c: colors[Math.floor(Math.random()*colors.length)],
+      s: 2+Math.random()*3,
+      a: Math.random()*Math.PI*2
+    });
+  }
+  animateConfetti();
+}
+let confettiTick=null;
+function animateConfetti(){
+  if(confettiTick) return;
+  confettiTick = requestAnimationFrame(function draw(){
+    ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    confettiParts.forEach(p=>{
+      p.y += p.s; p.x += Math.sin(p.a+=0.03)*0.8;
+      ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    });
+    confettiParts = confettiParts.filter(p=>p.y < confettiCanvas.height+20);
+    if(confettiParts.length>0){confettiTick=requestAnimationFrame(draw)}else{confettiTick=null}
+  });
+}
+
+/* ---------- UI ---------- */
 function makeCard(q){
   const el=document.createElement('section');
   el.className='scene';
@@ -208,16 +263,11 @@ function makeCard(q){
         </label>`).join('')}
     </div>`;
   const opts = el.querySelectorAll('.choice');
-  // 若曾作答，還原選取
-  if (answersAll[LEVEL][q.id]) {
-    const v = answersAll[LEVEL][q.id];
-    opts.forEach(o=>{ if(o.dataset.k===v) o.classList.add('active'); });
-  }
   opts.forEach(o=>o.addEventListener('click',()=>{
     opts.forEach(x=>x.classList.remove('active'));
     o.classList.add('active');
     const val = o.dataset.k;
-    answersAll[LEVEL][q.id]=val;
+    answers[q.id]=val;
     updateProgress();
     // 逐題回傳（失敗也不影響 UI）
     sendRow({
@@ -231,35 +281,36 @@ function makeCard(q){
   return el;
 }
 
-/* ---------- 渲染 ---------- */
 function render(){
+  answers = {};
   resultPanel.style.display='none';
+  $('#resultBtns').innerHTML='';
+  $('#dockExtra').innerHTML='';
   board.innerHTML='';
   const items = shuffle(BANK[LEVEL].slice());
   items.forEach(q=> board.appendChild(makeCard(q)));
   updateProgress();
-  updateDock();
   window.scrollTo({top: document.querySelector('.wrap').offsetTop+10, behavior:'smooth'});
 }
 
 function updateProgress(){
   const total = BANK[LEVEL].length;
-  const done = Object.keys(answersAll[LEVEL]).length;
+  const done = Object.keys(answers).length;
   $('#progress').textContent = `${done} / ${total} 已作答`;
 }
 
-/* ---------- 送出、成績、灑花 ---------- */
 function submit(){
   const items = BANK[LEVEL];
   const total = items.length;
-  if(Object.keys(answersAll[LEVEL]).length<total){ toast('還有題目未作答喔'); return; }
+  if(Object.keys(answers).length<total){ toast('還有題目未作答喔'); return; }
 
   let ok=0; const wrong=[];
   items.forEach(q=>{
-    const c = answersAll[LEVEL][q.id];
+    const c = answers[q.id];
     const corr = (c===q.truth);
     if(corr) ok++; else wrong.push({q, chosen:c});
   });
+  if(LEVEL===1){ wrongL1 = wrong; } else { wrongL2 = wrong; }
 
   $ok.textContent = ok; $wn.textContent = total-ok;
   $bad.innerHTML='';
@@ -269,7 +320,8 @@ function submit(){
   }else{
     wrong.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
-      div.innerHTML=`<div><b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
+      div.innerHTML=`
+        <div><b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
         <div class="small">👩‍🏫 ${w.q.t}</div>
         <div class="small">👤 ${w.q.s}</div>
         <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.q.truth)}</div>
@@ -278,6 +330,25 @@ function submit(){
     });
   }
   resultPanel.style.display='block';
+
+  // 結果按鈕區：關卡 1 → 前往關卡 2；關卡 2 → 看兩個關卡錯誤
+  const resultBtns = $('#resultBtns'); resultBtns.innerHTML='';
+  const dockExtra = $('#dockExtra');  dockExtra.innerHTML='';
+
+  if(LEVEL===1){
+    const go2a = document.createElement('button'); go2a.className='btn'; go2a.textContent='前往關卡 2';
+    go2a.onclick = ()=>{ LEVEL=2; render(); };
+    const go2b = go2a.cloneNode(true); go2b.onclick = ()=>{ LEVEL=2; render(); };
+    resultBtns.appendChild(go2a);
+    dockExtra.appendChild(go2b);
+  }else{
+    const seeAllA = document.createElement('button'); seeAllA.className='btn'; seeAllA.textContent='看兩個關卡錯誤';
+    seeAllA.onclick = openAllErrors;
+    const seeAllB = seeAllA.cloneNode(true); seeAllB.onclick = openAllErrors;
+    resultBtns.appendChild(seeAllA);
+    dockExtra.appendChild(seeAllB);
+  }
+
   // Summary（不阻塞 UI）
   sendRow({
     type:'summary',
@@ -287,67 +358,25 @@ function submit(){
     device_width:window.innerWidth, user_agent:navigator.userAgent
   });
 
-  // 顯示 Dock 的進階按鈕（關卡1：前往關卡2；關卡2：看兩關錯誤）
-  updateDock(true);
-  // 灑花 🎉
-  confetti();
+  // 灑花
+  launchConfetti();
+
   window.scrollTo({top: resultPanel.offsetTop-60, behavior:'smooth'});
 }
 
-/* ---------- 後台傳送 ---------- */
-function sendRow(obj){
-  try{
-    const blob = new Blob([JSON.stringify(obj)], {type:'application/json'});
-    if(navigator.sendBeacon){
-      navigator.sendBeacon(GAS_URL, blob);
-    }else{
-      fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)});
-    }
-  }catch(e){ /* 靜默 */ }
-}
-
-/* ---------- Dock 額外兩顆按鈕 ---------- */
-// 1) 前往關卡2（LEVEL=1 時才顯示）
-// 2) 看兩個關卡錯誤（LEVEL=2 且已提交後顯示）
-function updateDock(afterSubmit=false){
-  const goL2 = $('#btnGoL2');
-  const allBtn = $('#btnAllMistakes');
-
-  // 關卡1時：顯示「前往關卡2」
-  goL2.style.display = (LEVEL===1) ? 'inline-flex':'none';
-
-  // 關卡2提交後：顯示「看兩個關卡錯誤」
-  if (afterSubmit && LEVEL===2){
-    allBtn.style.display = 'inline-flex';
-  }else if (!afterSubmit){
-    allBtn.style.display = 'none';
-  }
-}
-
-/* ---------- 合併兩關的錯誤清單（Modal） ---------- */
-function showAllMistakes(){
+/* ---------- 兩關錯誤彙整 ---------- */
+function openAllErrors(){
+  const all = [...wrongL1, ...wrongL2];
   const list = $('#allList');
   list.innerHTML = '';
-  const collect = [];
-
-  [1,2].forEach(lvl=>{
-    BANK[lvl].forEach(q=>{
-      const my = answersAll[lvl][q.id];
-      if (my && my !== q.truth){
-        collect.push({lvl, q, chosen: my});
-      }
-    });
-  });
-
-  if (collect.length===0){
-    const div=document.createElement('div');
-    div.className='bubble';
-    div.textContent='🥳 兩個關卡都沒有錯題，太強啦！';
+  if(all.length===0){
+    const div=document.createElement('div'); div.className='bubble'; div.textContent='🎉 兩關全部答對，無可複習項目！';
     list.appendChild(div);
   }else{
-    collect.forEach(w=>{
+    all.forEach(w=>{
       const div=document.createElement('div'); div.className='baditem';
-      div.innerHTML=`<div><b>關卡${w.lvl}｜${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
+      div.innerHTML=`
+        <div><b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
         <div class="small">👩‍🏫 ${w.q.t}</div>
         <div class="small">👤 ${w.q.s}</div>
         <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.q.truth)}</div>
@@ -358,33 +387,16 @@ function showAllMistakes(){
   $('#dlgAll').style.display='flex';
 }
 
-/* ---------- 小小灑花特效（無外掛） ---------- */
-function confetti(){
-  const colors = ['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#E056FD'];
-  const count = 120;
-  for(let i=0;i<count;i++){
-    const s = document.createElement('span');
-    s.style.position='fixed';
-    s.style.top='-10px';
-    s.style.left = (Math.random()*100)+'vw';
-    s.style.width = '8px';
-    s.style.height= '14px';
-    s.style.background = colors[Math.floor(Math.random()*colors.length)];
-    s.style.opacity = '0.9';
-    s.style.borderRadius='2px';
-    s.style.transform = `rotate(${Math.random()*360}deg)`;
-    s.style.zIndex='9999';
-    const duration = 1500 + Math.random()*800;
-    s.style.transition = `transform ${duration}ms linear, top ${duration}ms linear, opacity ${duration}ms linear`;
-    document.body.appendChild(s);
-    // 觸發動畫
-    requestAnimationFrame(()=>{
-      s.style.top = '110vh';
-      s.style.transform = `translateY(100vh) rotate(${360+Math.random()*360}deg)`;
-      s.style.opacity='0.8';
-    });
-    setTimeout(()=> s.remove(), duration+200);
-  }
+/* ---------- 後台 ---------- */
+function sendRow(obj){
+  try{
+    const blob = new Blob([JSON.stringify(obj)], {type:'application/json'});
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(GAS_URL, blob);
+    }else{
+      fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)});
+    }
+  }catch(e){ /* 靜默 */ }
 }
 
 /* ---------- 綁定 ---------- */
@@ -401,20 +413,16 @@ window.addEventListener('load', ()=>{
     // 打開說明
     $('#dlgHow').style.display='flex';
   };
-
   // 說明
   $('#btnHow').onclick = ()=> $('#dlgHow').style.display='flex';
   $('#btnHowClose').onclick = ()=> $('#dlgHow').style.display='none';
-
   // 關卡
   $('#btnL1').onclick = ()=>{ LEVEL=1; render(); };
   $('#btnL2').onclick = ()=>{ LEVEL=2; render(); };
-  $('#btnGoL2').onclick = ()=>{ LEVEL=2; render(); }; // 底部的捷徑
   $('#btnReset').onclick = ()=> render();
   $('#btnSubmit').onclick = ()=> submit();
 
-  // 兩關錯誤 Modal
-  $('#btnAllMistakes').onclick = showAllMistakes;
+  // 兩關錯誤視窗
   $('#btnAllClose').onclick = ()=> $('#dlgAll').style.display='none';
 });
 </script>
