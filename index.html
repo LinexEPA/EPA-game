@@ -43,12 +43,12 @@ h1{margin:0;font-size:18px}
 .pill{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);font-size:12px;color:#555}
 .modal{
   position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:40;padding:14px;
-  overflow:auto; /* 重要：遮罩可捲動 */
+  overflow:auto; /* 遮罩可捲動 */
 }
 .sheet{
   background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:560px;width:100%;
-  max-height:calc(100vh - 48px); /* 重要：限制高度 */
-  overflow:auto; /* 重要：內容可捲動 */
+  max-height:calc(100vh - 48px); /* 限高 */
+  overflow:auto; /* 內容可捲動 */
 }
 .sheet h3{margin:6px 0 10px}
 .input{display:flex;flex-direction:column;gap:6px;margin-top:6px}
@@ -59,7 +59,6 @@ h1{margin:0;font-size:18px}
 .baditem{background:linear-gradient(180deg,#fff,#FFF9FB);border:1px solid #FFE1E6;border-radius:12px;padding:10px}
 .baditem .rw{background:#F0FFF7;border:1px dashed #BEE8D2;border-radius:10px;padding:8px;margin-top:6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;display:none;z-index:60}
-
 /* confetti canvas */
 #confetti { position:fixed; inset:0; pointer-events:none; z-index:50; display:none; }
 </style>
@@ -153,52 +152,8 @@ h1{margin:0;font-size:18px}
 <div class="toast" id="toast">已儲存</div>
 
 <script>
-// ---------- 設定 ----------
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxNTUJRT4yJ1IPszcVe-GT160kEXlcbVssf-SJ795T9yJemMeyZi7ONwKvoF5t3OR5t/exec"; // 你現在部署的新網址
-
-// ---------- 工具：保險型送出 ----------
-function sendRow(obj){
-  if (!GAS_URL || !/^https?:\/\//.test(GAS_URL)) return;
-
-  try {
-    // 1) 優先 Beacon（不會 preflight）
-    if (navigator.sendBeacon) {
-      const blob = new Blob([JSON.stringify(obj)], { type: 'text/plain;charset=UTF-8' });
-      const ok = navigator.sendBeacon(GAS_URL, blob);
-      if (ok) return; // 成功就結束
-    }
-  } catch (e) { /* ignore */ }
-
-  try {
-    // 2) fetch no-cors（不帶任何自訂 headers）
-    fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify(obj)
-    }).catch(()=>{}); // 就算被擋也先忽略，改走第 3 招
-  } catch (e) { /* ignore */ }
-
-  try {
-    // 3) Image ping（GET）最後保底，完全無 CORS 問題
-    // 只帶必要且短的欄位，以免網址過長
-    const q = new URLSearchParams({
-      t: new Date().toISOString(),
-      name: obj.name || '',
-      unit: obj.unit || '',
-      session_id: obj.session_id || '',
-      level: String(obj.level ?? ''),
-      item_id: obj.item_id || '',
-      truth: obj.truth || '',
-      chosen: obj.chosen || '',
-      correct: String(obj.correct ?? ''),
-      w: String(obj.device_width ?? '')
-    });
-    // 用時間戳避免快取
-    const img = new Image();
-    img.src = GAS_URL + '?' + q.toString() + '&_=' + Date.now();
-  } catch (e) { /* ignore */ }
-}
-</script>
+/* ---------- 設定：換成你最新的 Apps Script /exec ---------- */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxNTUJRT4yJ1IPszcVe-GT160kEXlcbVssf-SJ795T9yJemMeyZi7ONwKvoF5t3OR5t/exec";
 
 /* ---------- 題庫 ---------- */
 const BANK = {
@@ -378,25 +333,18 @@ function closeAll(){
   document.body.style.overflow = '';            // 解鎖背景
 }
 
-/* ---------- 後台：避免 CORS 的送法 ---------- */
+/* ---------- 後台：送出（先 Beacon，備援 no-cors fetch） ---------- */
 function sendRow(obj){
   try{
-    // 優先用 Beacon（不會有 CORS 問題）
     const payload = JSON.stringify(obj);
-    if (navigator.sendBeacon && typeof Blob !== 'undefined') {
+    if (navigator.sendBeacon) {
       const blob = new Blob([payload], { type: 'text/plain;charset=UTF-8' });
       navigator.sendBeacon(GAS_URL, blob);
       return;
     }
-    // 次選：fetch 無 header、no-cors（同樣不會 preflight）
-    fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      // 刻意不帶 Content-Type，讓瀏覽器使用簡單請求，避免 OPTIONS preflight
-      body: payload
-    });
-  } catch (e) {
-    // 靜默略過，避免影響作答體驗
+    fetch(GAS_URL, { method:'POST', mode:'no-cors', body: payload });
+  }catch(e){
+    // 靜默忽略
   }
 }
 
