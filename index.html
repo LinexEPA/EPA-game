@@ -335,16 +335,26 @@ function closeAll(){
   document.body.style.overflow = '';            // 解鎖背景
 }
 
-/* ---------- 後台 ---------- */
+/* ---------- 後台：避免 CORS 的送法 ---------- */
 function sendRow(obj){
   try{
-    const blob = new Blob([JSON.stringify(obj)], {type:'application/json'});
-    if(navigator.sendBeacon && GAS_URL && GAS_URL.startsWith('http')){
+    // 優先用 Beacon（不會有 CORS 問題）
+    const payload = JSON.stringify(obj);
+    if (navigator.sendBeacon && typeof Blob !== 'undefined') {
+      const blob = new Blob([payload], { type: 'text/plain;charset=UTF-8' });
       navigator.sendBeacon(GAS_URL, blob);
-    }else if (GAS_URL && GAS_URL.startsWith('http')){
-      fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)});
+      return;
     }
-  }catch(e){ /* 靜默 */ }
+    // 次選：fetch 無 header、no-cors（同樣不會 preflight）
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      // 刻意不帶 Content-Type，讓瀏覽器使用簡單請求，避免 OPTIONS preflight
+      body: payload
+    });
+  } catch (e) {
+    // 靜默略過，避免影響作答體驗
+  }
 }
 
 /* ---------- 灑花 ---------- */
