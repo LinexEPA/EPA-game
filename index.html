@@ -43,22 +43,23 @@ h1{margin:0;font-size:18px}
 .pill{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);font-size:12px;color:#555}
 .modal{
   position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:40;padding:14px;
-  overflow:auto; /* 遮罩可捲動 */
+  overflow:auto;
 }
 .sheet{
   background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:560px;width:100%;
-  max-height:calc(100vh - 48px); /* 限高 */
-  overflow:auto; /* 內容可捲動 */
+  max-height:calc(100vh - 48px);
+  overflow:auto;
 }
 .sheet h3{margin:6px 0 10px}
 .input{display:flex;flex-direction:column;gap:6px;margin-top:6px}
-.input input{padding:14px;border:1px solid #e5e7eb;border-radius:12px;font-size:18px} /* 放大字體 */
+.input input{padding:14px;border:1px solid #e5e7eb;border-radius:12px;font-size:18px}
 .small{font-size:12px;color:#6b7280}
 .result{display:none;margin-top:10px}
 .badlist{display:grid;grid-template-columns:1fr;gap:8px}
 .baditem{background:linear-gradient(180deg,#fff,#FFF9FB);border:1px solid #FFE1E6;border-radius:12px;padding:10px}
 .baditem .rw{background:#F0FFF7;border:1px dashed #BEE8D2;border-radius:10px;padding:8px;margin-top:6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;display:none;z-index:60}
+
 /* confetti canvas */
 #confetti { position:fixed; inset:0; pointer-events:none; z-index:50; display:none; }
 </style>
@@ -152,10 +153,10 @@ h1{margin:0;font-size:18px}
 <div class="toast" id="toast">已儲存</div>
 
 <script>
-/* ---------- 設定：換成你最新的 Apps Script /exec ---------- */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxH4e-qmUcgfXc2RqCJpulpwBL05vEunXPBkXs4N9PKLj1ssAP4XrmFckps6jdMS2BY/exec";
+/* ---------- 設定：把你的 Apps Script 網址貼在這裡 ---------- */
+const GAS_URL = "https://script.google.com/macros/s/AKfycby7HUbnveznE9W2OVXpq8orhOTqK7Ku2AATfdNq1Nkq0PnJnD0XqFDOLoYuOaX-_fXE/exec";
 
-/* ---------- 題庫 ---------- */
+/* ---------- 題庫（你的內容可自行調整） ---------- */
 const BANK = {
   1: [
     {id:"L1-01", scene:"交班前。", t:"昨天討論過交班，今天交班前我們先練一次，放輕鬆。", s:"好。", truth:"learner", why:"以學員能力配適，創造可達成的伸展目標。"},
@@ -166,30 +167,31 @@ const BANK = {
     {id:"L1-06", scene:"交班訓練。", t:"你先用 ISBAR 交班一次，我們錄下來，之後一起回顧。", s:"好！", truth:"learner", why:"結構化工具＋自我回顧，提升品質。"},
     {id:"L1-07", scene:"交班前。", t:"你先講精要版，我補關鍵並控時間。", s:"OK！", truth:"learner", why:"教師把關風險與節奏，學員保有練習片段。"},
     {id:"L1-08", scene:"衛教品質。", t:"給藥 OK，但衛教需要加強；等一下我先做一次並說明，下一床換你。", s:"好。", truth:"learner", why:"針對弱項拆解練習，逐步提升自我效能。"},
-    {id:"L1-09", scene:"帶教回饋。", t:"怕打擊他的信心，就說做得不錯吧。", s:"…", truth:"over", why:"以保護為名迴避回饋，應聚焦行為與下一步。"},
+    {id:"L1-09", scene:"帶教回饋。", t:"怕打擊他的信心，就說做得不錯吧。", s:"…", truth:"over",   why:"以保護為名迴避回饋，應聚焦行為與下一步。"},
   ],
   2: [
     {id:"L2-01", scene:"學習狀態。", t:"昨天兩次高風險錯誤，今天改回全程監督。", s:"了解。", truth:"learner", why:"依風險動態調整監督強度，安全優先。"},
-    {id:"L2-02", scene:"團隊關係。", t:"為了團隊和平，錯誤就先不提了。", s:"…", truth:"over", why:"需要以客觀事證與改善步驟溝通。"},
-    {id:"L2-03", scene:"高壓情境。", t:"他好像很怕，我更怕…我自己做吧。", s:"…", truth:"over", why:"可切出最小安全任務，在監督下嘗試。"},
-    {id:"L2-04", scene:"交班時間緊。", t:"今天交班很趕，就不要讓你講了。", s:"…", truth:"teacher", why:"可採精要版交班並補關鍵，維持練習與把關。"},
-    {id:"L2-05", scene:"示範後。", t:"這次我先做示範，你看就好。", s:"好。", truth:"teacher", why:"示範不等於練習；應安排跟做片段與回饋。"},
-    {id:"L2-06", scene:"DOPS。", t:"抽血技巧不熟，先用 DOPS 集中練三次。", s:"好。", truth:"learner", why:"用 DOPS 針對單一技能練，支撐 EPA 任務。"},
-    {id:"L2-07", scene:"規劃練習。", t:"等我有空再帶你練。", s:"…", truth:"teacher", why:"以教師時間為中心；應安排短時段微演練建立回饋循環。"},
-    {id:"L2-08", scene:"主觀放手。", t:"我覺得差不多了，可以放手讓他做。", s:"…", truth:"teacher", why:"應以等級與情境標準佐證，而非感覺。"},
-    {id:"L2-09", scene:"結構化交班。", t:"交班常漏重點，用 ISBAR 練習並錄音回顧。", s:"收到！", truth:"learner", why:"結構＋自我回顧能提升品質。"},
-    {id:"L2-10", scene:"可預期情境。", t:"此任務難度適中，正好挑戰你的下一階能力。", s:"想試試！", truth:"learner", why:"伸展目標、強化自我效能。"},
-    {id:"L2-11", scene:"指導策略。", t:"你先做一次，我在旁即時回饋，遇到風險我接手。", s:"好！", truth:"learner", why:"監督強度可調，保安全也保練習。"},
-    {id:"L2-12", scene:"保護心態。", t:"怕你受挫，就不說剛剛哪裡不好。", s:"…", truth:"over", why:"回避回饋會阻斷成長，應聚焦行為與可改進步驟。"},
+    {id:"L2-02", scene:"團隊關係。", t:"為了團隊和平，錯誤就先不提了。", s:"…", truth:"over",    why:"需要以客觀事證與改善步驟溝通。"},
+    {id:"L2-03", scene:"高壓情境。", t:"他好像很怕，我更怕…我自己做吧。", s:"…", truth:"over",    why:"可切出最小安全任務，在監督下嘗試。"},
+    {id:"L2-04", scene:"交班時間緊。", t:"今天交班很趕，就不要讓你講了。", s:"…", truth:"teacher",why:"可採精要版交班並補關鍵，維持練習與把關。"},
+    {id:"L2-05", scene:"示範後。", t:"這次我先做示範，你看就好。", s:"好。", truth:"teacher",why:"示範不等於練習；應安排跟做片段與回饋。"},
+    {id:"L2-06", scene:"DOPS。", t:"抽血技巧不熟，先用 DOPS 集中練三次。", s:"好。", truth:"learner",why:"用 DOPS 針對單一技能練，支撐 EPA 任務。"},
+    {id:"L2-07", scene:"規劃練習。", t:"等我有空再帶你練。", s:"…", truth:"teacher",why:"以教師時間為中心；應安排短時段微演練建立回饋循環。"},
+    {id:"L2-08", scene:"主觀放手。", t:"我覺得差不多了，可以放手讓他做。", s:"…", truth:"teacher",why:"應以等級與情境標準佐證，而非感覺。"},
+    {id:"L2-09", scene:"結構化交班。", t:"交班常漏重點，用 ISBAR 練習並錄音回顧。", s:"收到！", truth:"learner",why:"結構＋自我回顧能提升品質。"},
+    {id:"L2-10", scene:"可預期情境。", t:"此任務難度適中，正好挑戰你的下一階能力。", s:"想試試！", truth:"learner",why:"伸展目標、強化自我效能。"},
+    {id:"L2-11", scene:"指導策略。", t:"你先做一次，我在旁即時回饋，遇到風險我接手。", s:"好！", truth:"learner",why:"監督強度可調，保安全也保練習。"},
+    {id:"L2-12", scene:"保護心態。", t:"怕你受挫，就不說剛剛哪裡不好。", s:"…", truth:"over",   why:"回避回饋會阻斷成長，應聚焦行為與可改進步驟。"},
   ]
 };
 
 /* ---------- 狀態 ---------- */
 let LEVEL = 1;
-let answers = {};         // id -> chosen
-let doneLevel = {1:false, 2:false};
+let answers = {};               // id -> chosen
+let submittedLevel = {1:false,2:false};
+let doneLevel = {1:false,2:false};
+let wrongAll = [];              // 兩關累積錯題
 let user = {name:"", unit:"", session: "SID-"+Date.now().toString(36)+Math.random().toString(36).slice(2,8)};
-let wrongAll = [];        // 兩關累積錯題
 
 /* ---------- 工具 ---------- */
 const $ = s=>document.querySelector(s);
@@ -220,17 +222,9 @@ function makeCard(q){
   opts.forEach(o=>o.addEventListener('click',()=>{
     opts.forEach(x=>x.classList.remove('active'));
     o.classList.add('active');
-    const val = o.dataset.k;
-    answers[q.id]=val;
+    answers[q.id]=o.dataset.k;
     updateProgress();
-    // 逐題回傳（失敗也不影響 UI）
-    sendRow({
-      timestamp: new Date().toISOString(),
-      name:user.name, unit:user.unit, session_id:user.session,
-      level: LEVEL, item_id:q.id, truth:q.truth, chosen:val,
-      correct: (val===q.truth)?1:0, used_hint:0, time_ms:0,
-      device_width: window.innerWidth, user_agent: navigator.userAgent
-    });
+    // 🔸 不再逐題送出，改為 submit() 一次送本關
   }));
   return el;
 }
@@ -256,6 +250,11 @@ function submit(){
   const items = BANK[LEVEL];
   const total = items.length;
   if(Object.keys(answers).length<total){ toast('還有題目未作答喔'); return; }
+
+  if (submittedLevel[LEVEL]) { toast('本關已送出'); return; }
+  submittedLevel[LEVEL] = true;
+
+  // 計分 + 錯題整理
   let ok=0; const wrong=[];
   items.forEach(q=>{
     const c = answers[q.id];
@@ -280,27 +279,44 @@ function submit(){
     });
   }
   resultPanel.style.display='block';
-  // Summary（不阻塞 UI）
+
+  // 🔹 一次把本關所有題目寫入（每題一筆），避免重覆
+  const now = new Date().toISOString();
+  const rows = items.map(q => ({
+    timestamp: now,
+    name: user.name,
+    unit: user.unit,
+    session_id: user.session,
+    level: LEVEL,
+    item_id: q.id,
+    truth: q.truth,
+    chosen: answers[q.id],
+    correct: answers[q.id] === q.truth ? 1 : 0,
+    used_hint: 0,
+    time_ms: 0,
+    device_width: window.innerWidth,
+    user_agent: navigator.userAgent
+  }));
+  sendRow({ type: 'batch', rows });
+
+  // Summary
   sendRow({
     type:'summary',
-    timestamp:new Date().toISOString(),
+    timestamp: now,
     name:user.name, unit:user.unit, session_id:user.session,
     level:LEVEL, total:total, correct:ok,
     device_width:window.innerWidth, user_agent:navigator.userAgent
   });
 
-  // 記錄錯題到總表
+  // 收集錯題到總表
   wrong.forEach(w=> wrongAll.push({level:LEVEL, ...w}));
 
-  // 顯示導流按鈕
+  // 導流
   $after.style.display='flex';
   $('#btnGoL2').style.display = (LEVEL===1 ? 'inline-block':'none');
   $('#btnSeeAll').style.display = (LEVEL===2 ? 'inline-block':'none');
 
-  // 標記完成
   doneLevel[LEVEL] = true;
-
-  // 若兩關都完成 → 灑花＋提示
   if(doneLevel[1] && doneLevel[2]){
     confettiBoom();
     setTimeout(()=>alert('恭喜老師，完成遊戲任務！'), 400);
@@ -315,45 +331,44 @@ function openAll(){
   if(wrongAll.length===0){
     box.innerHTML = `<div class="bubble">太棒啦！兩關沒有錯題可以檢討 🎉</div>`;
   }else{
-    box.innerHTML = wrongAll.map(w=>{
-      return `<div class="baditem">
+    box.innerHTML = wrongAll.map(w=>`
+      <div class="baditem">
         <div><b>Lv${w.level}</b>｜<b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
         <div class="small">👩‍🏫 ${w.q.t}</div>
         <div class="small">👤 ${w.q.s}</div>
         <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.q.truth)}</div>
         <div class="rw"><b>為什麼？</b> ${w.q.why}</div>
-      </div>`;
-    }).join('');
+      </div>
+    `).join('');
   }
-  document.body.style.overflow = 'hidden';     // 鎖背景
+  document.body.style.overflow='hidden';
   $('#dlgAll').style.display='flex';
 }
 function closeAll(){
   $('#dlgAll').style.display='none';
-  document.body.style.overflow = '';            // 解鎖背景
+  document.body.style.overflow='';
 }
 
-/* ---------- 後台：送出（先 Beacon，備援 no-cors fetch） ---------- */
+/* ---------- 後台送出（避免 CORS） ---------- */
 function sendRow(obj){
   try{
     const payload = JSON.stringify(obj);
-    if (navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: 'text/plain;charset=UTF-8' });
+
+    if (navigator.sendBeacon && typeof Blob !== 'undefined') {
+      const blob = new Blob([payload], { type:'text/plain;charset=UTF-8' });
       navigator.sendBeacon(GAS_URL, blob);
       return;
     }
+
+    // fetch：no-cors + 不帶 Content-Type，避免 preflight
     fetch(GAS_URL, { method:'POST', mode:'no-cors', body: payload });
-  }catch(e){
-    // 靜默忽略
-  }
+  }catch(e){ /* 靜默 */ }
 }
 
 /* ---------- 灑花 ---------- */
 function confettiBoom(){
-  const cvs = $('#confetti');
-  const ctx = cvs.getContext('2d');
-  const W = cvs.width = innerWidth;
-  const H = cvs.height = innerHeight;
+  const cvs = $('#confetti'), ctx = cvs.getContext('2d');
+  const W = cvs.width = innerWidth, H = cvs.height = innerHeight;
   cvs.style.display='block';
   const N = 200;
   const P = Array.from({length:N},()=>({
@@ -363,15 +378,11 @@ function confettiBoom(){
   }));
   let t=0;
   (function loop(){
-    t++;
-    ctx.clearRect(0,0,W,H);
-    P.forEach(p=>{
-      p.x+=p.vx; p.y+=p.vy; p.vy+=0.06;
-      ctx.fillStyle=p.c;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    t++; ctx.clearRect(0,0,W,H);
+    P.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.06;
+      ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
     });
-    if(t<240) requestAnimationFrame(loop);
-    else cvs.style.display='none';
+    if(t<240) requestAnimationFrame(loop); else cvs.style.display='none';
   })();
 }
 
@@ -392,39 +403,29 @@ window.addEventListener('load', ()=>{
   };
 
   // 說明
-  $('#btnHow').onclick = ()=>{
-    $('#dlgHow').style.display='flex';
-    document.body.style.overflow='hidden';
-  };
-  $('#btnHowClose').onclick = ()=>{
-    $('#dlgHow').style.display='none';
-    document.body.style.overflow='';
-  };
+  $('#btnHow').onclick = ()=>{ $('#dlgHow').style.display='flex'; document.body.style.overflow='hidden'; };
+  $('#btnHowClose').onclick = ()=>{ $('#dlgHow').style.display='none'; document.body.style.overflow=''; };
 
   // 兩關彙整
   $('#btnAll').onclick = openAll;
   $('#btnAllClose').onclick = closeAll;
 
-  // 關卡
+  // 關卡切換
   $('#btnL1').onclick = ()=>{ LEVEL=1; render(); };
-  $('#btnL2').onclick = ()=>{
-    if(!doneLevel[1]) { alert('請先完成第一關暖暖身'); return; }
-    LEVEL=2; render();
-  };
+  $('#btnL2').onclick = ()=>{ if(!doneLevel[1]){ alert('請先完成第一關暖暖身'); return; } LEVEL=2; render(); };
+
+  // 底部按鈕
   $('#btnReset').onclick = ()=> render();
   $('#btnSubmit').onclick = ()=> submit();
 
-  // 結果區導流按鈕
+  // 結果區導流
   $('#btnGoL2').onclick = ()=>{ LEVEL=2; render(); };
   $('#btnSeeAll').onclick = openAll;
 
-  // 點遮罩關閉（所有 modal）
-  document.querySelectorAll('.modal').forEach(modal=>{
-    modal.addEventListener('click', e=>{
-      if(e.target===modal){
-        modal.style.display='none';
-        document.body.style.overflow='';
-      }
+  // 點遮罩關閉所有 modal
+  document.querySelectorAll('.modal').forEach(m=>{
+    m.addEventListener('click', e=>{
+      if(e.target===m){ m.style.display='none'; document.body.style.overflow=''; }
     });
   });
 });
