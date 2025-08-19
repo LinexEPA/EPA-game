@@ -153,9 +153,52 @@ h1{margin:0;font-size:18px}
 <div class="toast" id="toast">已儲存</div>
 
 <script>
-/* ---------- 設定 ---------- */
-/* 將你的已部署 Apps Script 網址貼在這裡（結尾記得雙引號！） */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxwQQxaxbGkBFZ2KQqca3bpSJb9YBtudbt8AxwynvbelsI5hDDbp5bqF8MLkJNsnJbtTA/exec";
+// ---------- 設定 ----------
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwqioPr8-MzJDNyUIlCSedYijXyK0RAf3_GtxQkLoz87csRMUxR8VJoIDhv1YbbMYYHrA/exec"; // 你現在部署的新網址
+
+// ---------- 工具：保險型送出 ----------
+function sendRow(obj){
+  if (!GAS_URL || !/^https?:\/\//.test(GAS_URL)) return;
+
+  try {
+    // 1) 優先 Beacon（不會 preflight）
+    if (navigator.sendBeacon) {
+      const blob = new Blob([JSON.stringify(obj)], { type: 'text/plain;charset=UTF-8' });
+      const ok = navigator.sendBeacon(GAS_URL, blob);
+      if (ok) return; // 成功就結束
+    }
+  } catch (e) { /* ignore */ }
+
+  try {
+    // 2) fetch no-cors（不帶任何自訂 headers）
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(obj)
+    }).catch(()=>{}); // 就算被擋也先忽略，改走第 3 招
+  } catch (e) { /* ignore */ }
+
+  try {
+    // 3) Image ping（GET）最後保底，完全無 CORS 問題
+    // 只帶必要且短的欄位，以免網址過長
+    const q = new URLSearchParams({
+      t: new Date().toISOString(),
+      name: obj.name || '',
+      unit: obj.unit || '',
+      session_id: obj.session_id || '',
+      level: String(obj.level ?? ''),
+      item_id: obj.item_id || '',
+      truth: obj.truth || '',
+      chosen: obj.chosen || '',
+      correct: String(obj.correct ?? ''),
+      w: String(obj.device_width ?? '')
+    });
+    // 用時間戳避免快取
+    const img = new Image();
+    img.src = GAS_URL + '?' + q.toString() + '&_=' + Date.now();
+  } catch (e) { /* ignore */ }
+}
+</script>
 
 /* ---------- 題庫 ---------- */
 const BANK = {
