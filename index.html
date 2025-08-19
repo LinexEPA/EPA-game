@@ -8,14 +8,15 @@
 :root{
   --bg:#FFF6F8; --card:#fff; --ink:#1f2937; --muted:#6b7280;
   --brand:#6C79FF; --ok:#21c08b; --warn:#ffb84d; --bad:#ff7a88;
+  --pink:#FFE8ED; --green:#E8FFF1; --yellow:#FFF2C6;
   --shadow:0 8px 20px rgba(0,0,0,.06); --radius:18px;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:
- radial-gradient(900px 600px at 85% -10%, #ffe9f3 0, rgba(255,233,243,0) 70%), var(--bg);
+ radial-gradient(1000px 700px at 85% -10%, #ffe9f3 0, rgba(255,233,243,0) 70%), var(--bg);
  color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Inter","Noto Sans TC","Segoe UI",Roboto,Helvetica,Arial}
 .wrap{max-width:900px;margin:0 auto;padding:12px 14px 120px}
-.header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.06)}
+.header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border-bottom:1px solid rgba(0,0,0,.06)}
 .bar{max-width:900px;margin:0 auto;padding:10px 14px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
 .brand{display:flex;gap:10px;align-items:center;background:var(--card);padding:10px 12px;border-radius:14px;box-shadow:var(--shadow);font-weight:800}
 h1{margin:0;font-size:18px}
@@ -37,28 +38,22 @@ h1{margin:0;font-size:18px}
 .choice[data-k="over"]{background:linear-gradient(180deg,#fff,#fff2da)}
 .choice input{display:none}
 .choice.active{outline:3px solid #6C79FF}
-
-/* 底部工具列 */
 .footer{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;max-width:920px;width:calc(100% - 16px);z-index:30}
-.dock{display:flex;gap:8px;justify-content:flex-end;align-items:center;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:var(--shadow);padding:8px;flex-wrap:wrap}
+.dock{display:flex;gap:8px;justify-content:flex-end;align-items:center;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:1px solid rgba(0,0,0,.06);border-radius:16px;box-shadow:var(--shadow);padding:8px}
 .pill{padding:8px 12px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);font-size:12px;color:#555}
-
-/* Modal（可捲動、可關閉） */
-.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.28);z-index:40;padding:16px}
-.sheet{position:relative;background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:680px;width:100%;
-       max-height:85vh;overflow:auto}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.25);z-index:40;padding:14px}
+.sheet{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px;max-width:560px;width:100%}
 .sheet h3{margin:6px 0 10px}
-.modal .close{position:sticky;top:0;display:flex;justify-content:flex-end;margin:-6px -6px 8px -6px}
-.xbtn{border:1px solid rgba(0,0,0,.08);background:#fff;border-radius:10px;padding:6px 10px;cursor:pointer;box-shadow:var(--shadow);font-weight:800}
-
-/* 結果 */
+.input{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.input input{padding:12px;border:1px solid #e5e7eb;border-radius:12px;font-size:20px} /* 放大字體 */
+.small{font-size:12px;color:#6b7280}
 .result{display:none;margin-top:10px}
 .badlist{display:grid;grid-template-columns:1fr;gap:8px}
 .baditem{background:linear-gradient(180deg,#fff,#FFF9FB);border:1px solid #FFE1E6;border-radius:12px;padding:10px}
 .baditem .rw{background:#F0FFF7;border:1px dashed #BEE8D2;border-radius:10px;padding:8px;margin-top:6px}
-
-/* Toast */
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111;color:#fff;padding:8px 12px;border-radius:999px;display:none;z-index:60}
+/* 底部兩個功能鍵區 */
+.bottom-tools{display:flex;gap:8px;align-items:center}
 </style>
 </head>
 <body>
@@ -75,36 +70,30 @@ h1{margin:0;font-size:18px}
 
 <div class="wrap">
   <div class="notice">以下對話情境，你覺得是以誰為中心呢？（👩‍🏫 教師中心 / 🌱 學員中心 / 💗 過度包容）</div>
-
-  <!-- 題目板 -->
   <section id="board" class="card panel"></section>
 
-  <!-- 結果區 -->
   <section id="resultPanel" class="card panel result">
     <h3>結果</h3>
     <p>本關答對 <b id="okn">0</b> 題、答錯 <b id="wn">0</b> 題。</p>
     <div id="badlist" class="badlist"></div>
-    <!-- 關卡 2 結束後：顯示兩關錯誤 -->
-    <div id="allWrap" style="display:none;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" id="btnAllOpen">看兩個關卡錯誤</button>
-    </div>
   </section>
 </div>
 
-<!-- 底部固定工具列：在關卡 1 顯示「前往關卡 2」 -->
 <footer class="footer">
   <div class="dock">
     <span class="pill" id="progress">0 / 0 已作答</span>
+    <div class="bottom-tools">
+      <button class="btn ghost" id="btnToL2" style="display:none">➡️ 前往關卡 2</button>
+      <button class="btn ghost" id="btnAll"  style="display:none">📒 看兩關錯誤</button>
+    </div>
     <button class="btn ghost" id="btnReset">重置本關</button>
     <button class="btn primary" id="btnSubmit">送出本關</button>
-    <button class="btn" id="btnBottomL2" style="display:none">前往關卡 2 ➜</button>
   </div>
 </footer>
 
 <!-- 身份輸入 -->
-<div id="dlgID" class="modal" role="dialog" aria-modal="true">
+<div id="dlgID" class="modal">
   <div class="sheet">
-    <div class="close"><button class="xbtn" id="btnIDClose">×</button></div>
     <h3>請先輸入識別資訊</h3>
     <div class="input">
       <label>教師姓名（必填）</label>
@@ -113,7 +102,7 @@ h1{margin:0;font-size:18px}
     <div class="input">
       <label>單位 / 部門（必填）</label>
       <input id="inpUnit" placeholder="例如：11B"/>
-      <div class="small" style="color:#6b7280">僅用於學習統計，不會對外公開。</div>
+      <div class="small">僅用於學習統計，不會對外公開。</div>
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
       <button class="btn primary" id="btnStart">開始</button>
@@ -122,9 +111,8 @@ h1{margin:0;font-size:18px}
 </div>
 
 <!-- 說明 -->
-<div id="dlgHow" class="modal" role="dialog" aria-modal="true">
+<div id="dlgHow" class="modal">
   <div class="sheet">
-    <div class="close"><button class="xbtn" id="btnHowClose">×</button></div>
     <h3>👀 開始前請看我</h3>
     <div class="baditem">
       <div><b>玩法</b></div>
@@ -134,13 +122,15 @@ h1{margin:0;font-size:18px}
       <div><b>精神喊話</b></div>
       <div class="rw">我相信我是<strong>神隊友</strong>老師，學妹一定能接住我傳的球！收好我的白眼、壓住我的深呼吸，讓他相信自己還有救！不要表露、不要放棄，我們需要新鮮的夥伴一起上班。想想我的排班、想想我的 OFF Day～ <b>我可以，他也一定可以！</b> 🫡</div>
     </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button class="btn" id="btnHowClose">關閉</button>
+    </div>
   </div>
 </div>
 
 <!-- 兩關錯誤彙整 -->
-<div id="dlgAll" class="modal" role="dialog" aria-modal="true">
+<div id="dlgAll" class="modal" style="display:none">
   <div class="sheet">
-    <div class="close"><button class="xbtn" id="btnAllCloseTop">×</button></div>
     <h3>兩個關卡錯誤｜快速複習</h3>
     <div id="allList" class="badlist"></div>
     <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
@@ -149,11 +139,15 @@ h1{margin:0;font-size:18px}
   </div>
 </div>
 
+<!-- confetti -->
+<canvas id="confetti" style="position:fixed;inset:0;pointer-events:none;display:none;z-index:80"></canvas>
+
 <div class="toast" id="toast">已儲存</div>
 
 <script>
-/* ---------- 把這個換成你的 Apps Script /exec ---------- */
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzsrtF8ZkDDkocZLITY5IRM_joWcbRJOcdoTRR4JXvcKSAMs1Lj6nUONutk7dT5_nzgGg/exec";
+/* =============== 你只要改這一行 =============== */
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxy9qCxE_C1VjfuPZBxbFUfJPcY2bJhKO5lcC4_ToWc0Oa90aYiyvVExoyfCWAM3IjRUg/exec";
+/* ============================================== */
 
 /* ---------- 題庫 ---------- */
 const BANK = {
@@ -162,43 +156,54 @@ const BANK = {
     {id:"L1-02", scene:"連續照顧。", t:"你已經卡這段第 2 次，都認識病人，應該可以自己去給藥吧。", s:"…", truth:"teacher", why:"以主觀感覺放手，未依等級與情境風險判斷。"},
     {id:"L1-03", scene:"示範與放手。", t:"這次我先做示範，你看就好。", s:"…", truth:"teacher", why:"單向示範；應安排隨後上手練習與回饋。"},
     {id:"L1-04", scene:"交班壓力。", t:"今天交班很趕，就不要讓學員講了。", s:"…", truth:"teacher", why:"時間壓力下仍可用精要版交班，保留練習與把關。"},
-    {id:"L1-05", scene:"抽血練習。", t:"剛剛看你抽血還不熟，等一下我再做一次邊說明，下一床換你抽，我在旁幫你。", s:"好。", truth:"learner", why:"分段委託與即時回饋，屬責任分級。"},
+    {id:"L1-05", scene:"抽血練習。", t:"剛剛看你抽血還不熟，等一下我再做一次邊說明，下一床換你，我在旁幫你。", s:"好。", truth:"learner", why:"分段委託與即時回饋，屬責任分級。"},
     {id:"L1-06", scene:"交班訓練。", t:"你先用 ISBAR 交班一次，我們錄下來，之後一起回顧。", s:"好！", truth:"learner", why:"結構化工具＋自我回顧，提升品質。"},
     {id:"L1-07", scene:"交班前。", t:"你先講精要版，我補關鍵並控時間。", s:"OK！", truth:"learner", why:"教師把關風險與節奏，學員保有練習片段。"},
     {id:"L1-08", scene:"衛教品質。", t:"給藥 OK，但衛教需要加強；等一下我先做一次並說明，下一床換你。", s:"好。", truth:"learner", why:"針對弱項拆解練習，逐步提升自我效能。"},
-    {id:"L1-09", scene:"帶教回饋。", t:"怕打擊他的信心，就說做得不錯吧。", s:"…", truth:"over",    why:"以保護為名迴避回饋，應聚焦行為與下一步。"},
+    {id:"L1-09", scene:"帶教回饋。", t:"怕打擊他的信心，就說做得不錯吧。", s:"…", truth:"over",    why:"以保護為名迴避回饋，應聚焦行為與下一步。"}
   ],
   2: [
     {id:"L2-01", scene:"學習狀態。", t:"昨天兩次高風險錯誤，今天改回全程監督。", s:"了解。", truth:"learner", why:"依風險動態調整監督強度，安全優先。"},
-    {id:"L2-02", scene:"團隊關係。", t:"為了團隊和平，錯誤就先不提了。", s:"…", truth:"over",   why:"避免衝突≠不該回饋；需以客觀事證與改善步驟溝通。"},
-    {id:"L2-03", scene:"高壓情境。", t:"他好像很怕，我更怕…我自己做吧。", s:"…", truth:"over",   why:"可切出最小安全任務，在監督下嘗試。"},
+    {id:"L2-02", scene:"團隊關係。", t:"為了團隊和平，錯誤就先不提了。", s:"…", truth:"over",    why:"避免衝突≠不該回饋；需以客觀事證與改善步驟溝通。"},
+    {id:"L2-03", scene:"高壓情境。", t:"他好像很怕，我更怕…我自己做吧。", s:"…", truth:"over",    why:"可切出最小安全任務，在監督下嘗試。"},
     {id:"L2-04", scene:"交班時間緊。", t:"今天交班很趕，就不要讓你講了。", s:"…", truth:"teacher", why:"可採精要版交班並補關鍵，維持練習與把關。"},
-    {id:"L2-05", scene:"示範後。", t:"這次我先做示範，你看就好。", s:"好。", truth:"teacher",    why:"示範不等於練習；應安排跟做片段與回饋。"},
+    {id:"L2-05", scene:"示範後。", t:"這次我先做示範，你看就好。", s:"好。", truth:"teacher", why:"示範不等於練習；應安排跟做片段與回饋。"},
     {id:"L2-06", scene:"DOPS。",   t:"抽血技巧不熟，先用 DOPS 集中練三次。", s:"好。", truth:"learner", why:"用 DOPS 針對單一技能練，支撐 EPA 任務。"},
-    {id:"L2-07", scene:"規劃練習。", t:"等我有空再帶你練。", s:"…", truth:"teacher",  why:"以教師時間為中心；應安排短時段微演練建立回饋循環。"},
-    {id:"L2-08", scene:"主觀放手。", t:"我覺得差不多了，可以放手讓他做。", s:"…", truth:"teacher",  why:"應以等級與情境標準佐證，而非感覺。"},
+    {id:"L2-07", scene:"規劃練習。", t:"等我有空再帶你練。", s:"…", truth:"teacher", why:"以教師時間為中心；應安排短時段微演練建立回饋循環。"},
+    {id:"L2-08", scene:"主觀放手。", t:"我覺得差不多了，可以放手讓他做。", s:"…", truth:"teacher", why:"應以等級與情境標準佐證，而非感覺。"},
     {id:"L2-09", scene:"結構化交班。", t:"交班常漏重點，用 ISBAR 練習並錄音回顧。", s:"收到！", truth:"learner", why:"結構＋自我回顧能提升品質。"},
     {id:"L2-10", scene:"可預期情境。", t:"此任務難度適中，正好挑戰你的下一階能力。", s:"想試試！", truth:"learner", why:"伸展目標、強化自我效能。"},
-    {id:"L2-11", scene:"指導策略。", t:"你先做一次，我在旁即時回饋，遇到風險我接手。", s:"好！", truth:"learner",  why:"監督強度可調，保安全也保練習。"},
-    {id:"L2-12", scene:"保護心態。", t:"怕你受挫，就不說剛剛哪裡不好。", s:"…", truth:"over",    why:"回避回饋會阻斷成長，應聚焦行為與可改進步驟。"},
+    {id:"L2-11", scene:"指導策略。", t:"你先做一次，我在旁即時回饋，遇到風險我接手。", s:"好！", truth:"learner", why:"監督強度可調，保安全也保練習。"},
+    {id:"L2-12", scene:"保護心態。", t:"怕你受挫，就不說剛剛哪裡不好。", s:"…", truth:"over",    why:"回避回饋會阻斷成長，應聚焦行為與可改進步驟。"}
   ]
 };
 
 /* ---------- 狀態 ---------- */
 let LEVEL = 1;
-let answers = {};                // id -> chosen
-let wrongAcross = {1:[], 2:[]};  // 兩關錯題彙整
+let answers = {};                     // 當關作答
+let summaryWrong = {1:[], 2:[]};      // 兩關錯題收集
 let user = {name:"", unit:"", session: "SID-"+Date.now().toString(36)+Math.random().toString(36).slice(2,8)};
+let doneLevel1 = false;
 
 /* ---------- 工具 ---------- */
 const $ = s=>document.querySelector(s);
 const board = $('#board');
 const resultPanel = $('#resultPanel');
 const $ok = $('#okn'); const $wn = $('#wn'); const $bad = $('#badlist');
-const $allWrap = $('#allWrap'); const $allList = $('#allList');
-const toast = msg => { const t=$('.toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1200); };
+const toast = msg => { const t=$('.toast'); t.textContent=msg; t.style.display='block'; setTimeout(()=>t.style.display='none',1000); };
 const label = k => k==='teacher'?'教師中心':k==='learner'?'學員中心':'過度包容';
 const shuffle = a => a.map(x=>[Math.random(),x]).sort((p,q)=>p[0]-q[0]).map(x=>x[1]);
+
+/* ---------- confetti 極簡版 ---------- */
+const cvs = $('#confetti'); const ctx = cvs.getContext('2d');
+let confettiTimer=null, particles=[];
+function launchConfetti(ms=1500){
+  cvs.width=innerWidth; cvs.height=innerHeight; cvs.style.display='block';
+  particles=[...Array(120)].map(()=>({x:Math.random()*cvs.width,y:-20,r:4+Math.random()*6,vy:2+Math.random()*4,ax:(Math.random()-.5)*0.4,color:`hsl(${Math.random()*360},90%,60%)`}));
+  const draw=()=>{ctx.clearRect(0,0,cvs.width,cvs.height);particles.forEach(p=>{p.vy+=0.05;p.x+=p.ax;p.y+=p.vy;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();});};
+  confettiTimer=setInterval(draw,16);
+  setTimeout(()=>{clearInterval(confettiTimer); cvs.style.display='none';}, ms);
+}
 
 /* ---------- UI ---------- */
 function makeCard(q){
@@ -222,13 +227,14 @@ function makeCard(q){
     const val = o.dataset.k;
     answers[q.id]=val;
     updateProgress();
-    // 逐題寫回
+    // 逐題回傳（帶 row_id 以利去重）
     sendRow({
       timestamp: new Date().toISOString(),
       name:user.name, unit:user.unit, session_id:user.session,
       level: LEVEL, item_id:q.id, truth:q.truth, chosen:val,
       correct: (val===q.truth)?1:0, used_hint:0, time_ms:0,
-      device_width: window.innerWidth, user_agent: navigator.userAgent
+      device_width: window.innerWidth, user_agent: navigator.userAgent,
+      row_id: `${user.session}|${LEVEL}|${q.id}`
     });
   }));
   return el;
@@ -237,24 +243,20 @@ function makeCard(q){
 function render(){
   answers = {};
   resultPanel.style.display='none';
-  $allWrap.style.display = 'none';
   board.innerHTML='';
   const items = shuffle(BANK[LEVEL].slice());
   items.forEach(q=> board.appendChild(makeCard(q)));
   updateProgress();
-  updateDock();
-  const top = document.querySelector('.wrap').offsetTop + 6;
-  window.scrollTo({top, behavior:'smooth'});
+  // 清理下方工具顯示
+  $('#btnToL2').style.display = (LEVEL===1? 'inline-block':'none');
+  $('#btnAll').style.display  = 'none';
+  window.scrollTo({top: document.querySelector('.wrap').offsetTop+10, behavior:'smooth'});
 }
 
 function updateProgress(){
   const total = BANK[LEVEL].length;
   const done = Object.keys(answers).length;
   $('#progress').textContent = `${done} / ${total} 已作答`;
-}
-
-function updateDock(){
-  $('#btnBottomL2').style.display = (LEVEL===1) ? 'inline-flex' : 'none';
 }
 
 function submit(){
@@ -267,8 +269,6 @@ function submit(){
     const corr = (c===q.truth);
     if(corr) ok++; else wrong.push({q, chosen:c});
   });
-  wrongAcross[LEVEL] = wrong.slice(0);
-
   $ok.textContent = ok; $wn.textContent = total-ok;
   $bad.innerHTML='';
   if(wrong.length===0){
@@ -288,130 +288,86 @@ function submit(){
   }
   resultPanel.style.display='block';
 
-  // 關卡 Summary 寫回
-  sendRow({
-    type:'summary',
-    timestamp:new Date().toISOString(),
-    name:user.name, unit:user.unit, session_id:user.session,
-    level:LEVEL, total:total, correct:ok,
-    device_width:window.innerWidth, user_agent:navigator.userAgent
-  });
+  // 存本關錯題供「兩關錯誤」用
+  summaryWrong[LEVEL] = wrong.map(w=>({id:w.q.id,scene:w.q.scene,t:w.q.t,s:w.q.s,truth:w.q.truth,chosen:w.chosen,why:w.q.why}));
 
-  if(LEVEL===2){ buildAll(); $allWrap.style.display='flex'; }
-  confettiBurst(120);
+  // 第一關完成 → 開啟「前往關卡2」
+  if (LEVEL===1){
+    doneLevel1 = true;
+    $('#btnToL2').style.display='inline-block';
+  }
+
+  // 第二關完成 → 顯示彙整與灑花、提示
+  if (LEVEL===2){
+    $('#btnAll').style.display='inline-block';
+    launchConfetti(1800);
+    setTimeout(()=>alert('恭喜老師，完成遊戲任務！'), 300);
+  }
+
   window.scrollTo({top: resultPanel.offsetTop-60, behavior:'smooth'});
 }
 
 /* ---------- 兩關錯誤彙整 ---------- */
-function buildAll(){
-  const all = [...wrongAcross[1], ...wrongAcross[2]];
-  $allList.innerHTML = '';
-  if(all.length===0){
-    const d=document.createElement('div'); d.className='bubble'; d.textContent='🎉 兩關都全對，太猛了！';
-    $allList.appendChild(d);
-    return;
+function openAllWrong(){
+  const list = [...(summaryWrong[1]||[]), ...(summaryWrong[2]||[])];
+  const box = $('#allList'); box.innerHTML='';
+  if(list.length===0){ box.innerHTML='<div class="bubble">🎯 兩關都沒錯題，太強了！</div>'; }
+  else{
+    list.forEach(w=>{
+      const d=document.createElement('div'); d.className='baditem';
+      d.innerHTML = `
+        <div><b>${w.scene}</b>　<span class="small" style="color:#6b7280">${w.id}</span></div>
+        <div class="small">👩‍🏫 ${w.t}</div>
+        <div class="small">👤 ${w.s}</div>
+        <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.truth)}</div>
+        <div class="rw"><b>為什麼？</b> ${w.why}</div>`;
+      box.appendChild(d);
+    });
   }
-  all.forEach(w=>{
-    const div=document.createElement('div'); div.className='baditem';
-    div.innerHTML=`
-      <div><b>${w.q.scene}</b>　<span class="small" style="color:#6b7280">${w.q.id}</span></div>
-      <div class="small">👩‍🏫 ${w.q.t}</div>
-      <div class="small">👤 ${w.q.s}</div>
-      <div style="margin-top:6px"><b>你的答案：</b>${label(w.chosen)}　｜　<b>正解：</b>${label(w.q.truth)}</div>
-      <div class="rw"><b>為什麼？</b> ${w.q.why}</div>`;
-    $allList.appendChild(div);
-  });
+  $('#dlgAll').style.display='flex';
 }
 
-/* ---------- 回寫（最穩版） ---------- */
+/* ---------- 後台寫入 ---------- */
 function sendRow(obj){
   try{
-    obj.timestamp    = obj.timestamp || new Date().toISOString();
-    obj.name         = obj.name      || (window.user?.name  || "");
-    obj.unit         = obj.unit      || (window.user?.unit  || "");
-    obj.session_id   = obj.session_id|| (window.user?.session || ("SID-"+Date.now().toString(36)));
-    obj.device_width = (obj.device_width!=null) ? obj.device_width : window.innerWidth;
-    obj.user_agent   = obj.user_agent || navigator.userAgent;
-
-    const body = JSON.stringify(obj);
-    fetch(GAS_URL, {
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body,
-      keepalive:true
-    });
-  }catch(e){}
+    const blob = new Blob([JSON.stringify(obj)], {type:'application/json'});
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(GAS_URL, blob);
+    }else{
+      fetch(GAS_URL, {method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj)});
+    }
+  }catch(e){ /* 靜默 */ }
 }
-
-/* ---------- 灑花特效 ---------- */
-function confettiBurst(n=80){
-  const colors=['#f87171','#fb7185','#fbbf24','#34d399','#60a5fa','#a78bfa','#f472b6','#facc15'];
-  for(let i=0;i<n;i++){
-    const s=document.createElement('div');
-    s.style.cssText=`position:fixed;inset:auto auto 100%;width:8px;height:8px;border-radius:2px;z-index:99;
-      background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}vw;opacity:1;transform:rotate(${Math.random()*360}deg)`;
-    document.body.appendChild(s);
-    const dy= 80 + Math.random()*120;
-    const dx= (Math.random()-.5)*60;
-    const dur= 1200 + Math.random()*800;
-    s.animate([
-      {transform:`translate(0,0) rotate(0)`, opacity:1},
-      {transform:`translate(${dx}px, ${dy}vh) rotate(${Math.random()*720}deg)`, opacity:0}
-    ], {duration:dur, easing:'cubic-bezier(.2,.8,.2,1)'}).onfinish=()=>s.remove();
-  }
-}
-
-/* ---------- Modal：可關、可捲動、點背景關、ESC 關 ---------- */
-function openModal(sel){ const m=$(sel); if(!m)return; m.style.display='flex'; document.body.style.overflow='hidden'; }
-function closeModal(sel){ const m=$(sel); if(!m)return; m.style.display='none'; document.body.style.overflow=''; }
-window.addEventListener('keydown', (e)=>{ if(e.key==='Escape'){ ['#dlgID','#dlgHow','#dlgAll'].forEach(sel=>closeModal(sel)); } });
-['dlgID','dlgHow','dlgAll'].forEach(mid=>{
-  document.addEventListener('click', (ev)=>{
-    const m = document.getElementById(mid);
-    if(!m || m.style.display==='none') return;
-    const sheet = m.querySelector('.sheet');
-    if(!sheet.contains(ev.target)) closeModal('#'+mid);
-  });
-});
 
 /* ---------- 綁定 ---------- */
 window.addEventListener('load', ()=>{
-  // 身份視窗
-  openModal('#dlgID');
+  // 身份
+  const dlg = $('#dlgID'); dlg.style.display='flex';
   $('#btnStart').onclick = ()=>{
     const name = $('#inpName').value.trim();
     const unit = $('#inpUnit').value.trim();
     if(!name || !unit){ toast('請完整填寫姓名與單位'); return; }
     user.name=name; user.unit=unit;
-    closeModal('#dlgID');
+    dlg.style.display='none';
     render();
-    openModal('#dlgHow'); // 一開始就打開說明
+    // 自動彈「玩前請看我」
+    $('#dlgHow').style.display='flex';
   };
-  $('#btnIDClose').onclick = ()=> closeModal('#dlgID');
-
   // 說明
-  $('#btnHow').onclick = ()=> openModal('#dlgHow');
-  $('#btnHowClose').onclick = ()=> closeModal('#dlgHow');
-
-  // 關卡切換
+  $('#btnHow').onclick      = ()=> $('#dlgHow').style.display='flex';
+  $('#btnHowClose').onclick = ()=> $('#dlgHow').style.display='none';
+  // 關卡
   $('#btnL1').onclick = ()=>{ LEVEL=1; render(); };
-  $('#btnL2').onclick = ()=>{ LEVEL=2; render(); };
-  $('#btnBottomL2').onclick = ()=>{ LEVEL=2; render(); };
-
-  // 送出與重置
+  $('#btnL2').onclick = ()=>{
+    if (!doneLevel1){ alert('請先完成第一關暖暖身'); return; }
+    LEVEL=2; render();
+  };
+  // 底部工具
+  $('#btnToL2').onclick = ()=>{ if(!doneLevel1){alert('請先完成第一關暖暖身');return;} LEVEL=2; render(); };
+  $('#btnAll').onclick  = ()=> openAllWrong();
+  $('#btnAllClose').onclick = ()=> $('#dlgAll').style.display='none';
   $('#btnReset').onclick = ()=> render();
   $('#btnSubmit').onclick = ()=> submit();
-
-  // 兩關錯誤 modal（保險版事件）
-  const openAllModalSafe = ()=>{ try{ buildAll(); }catch(_){} openModal('#dlgAll'); };
-  document.addEventListener('click', (ev)=>{
-    const t = ev.target; if(!t) return;
-    const btn = (t.id==='btnAllOpen') ? t : (t.closest && t.closest('#btnAllOpen'));
-    if(btn){ ev.preventDefault(); openAllModalSafe(); }
-  });
-  $('#btnAllClose').onclick = ()=> closeModal('#dlgAll');
-  $('#btnAllCloseTop').onclick = ()=> closeModal('#dlgAll');
 });
 </script>
 </body>
